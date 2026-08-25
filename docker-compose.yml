@@ -1,0 +1,27 @@
+services:
+
+  db:
+    image: postgres:17
+    container_name: django_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: django_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: django_api
+    ports:
+      - "8081:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
