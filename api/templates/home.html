@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My App</title>
+    <title>Login</title>
     <style>
         * {
             box-sizing: border-box;
@@ -27,19 +27,19 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             text-align: center;
-            max-width: 450px;
+            max-width: 400px;
             width: 90%;
         }
 
         .welcome-card h1 {
             color: #2c3e50;
-            margin-bottom: 0.75rem;
-            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
         }
 
         .welcome-card p {
             color: #666;
-            font-size: 1rem;
+            font-size: 0.95rem;
             line-height: 1.5;
             margin-bottom: 1.5rem;
         }
@@ -57,8 +57,7 @@
             font-size: 0.9rem;
         }
 
-        .form-group input,
-        .form-group textarea {
+        .form-group input {
             width: 100%;
             padding: 0.65rem 0.85rem;
             border: 1px solid #ddd;
@@ -67,15 +66,9 @@
             transition: border-color 0.2s ease;
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #007bff;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
         }
 
         .btn {
@@ -102,24 +95,20 @@
 <body>
 
     <div class="welcome-card">
-        <h1>Welcome!</h1>
-        <p>Your Django template is set up and loading correctly. Fill out the form below to get started.</p>
+        <h1>Login</h1>
+        <p>Enter your credentials to continue.</p>
 
         <form method="post" action="">
             {% csrf_token %}
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Username" required autofocus>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" placeholder="Your message..." rows="3"></textarea>
-            </div>
-            <button type="submit" class="btn">Submit</button>
+            <button type="submit" class="btn">Log in</button>
         </form>
     </div>
 
