@@ -28,6 +28,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']  # Allow all hosts for local Docker development
 
+# HTTPS / proxy settings (nginx terminates SSL)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:8443',
+    'https://127.0.0.1:8443',
+    'http://localhost:8081',
+    'http://127.0.0.1:8081',
+]
+
 
 # Application definition
 
