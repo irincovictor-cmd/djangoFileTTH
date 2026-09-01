@@ -41,7 +41,41 @@
             color: #666;
             font-size: 1rem;
             line-height: 1.5;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
         .btn {
@@ -50,9 +84,14 @@
             color: #ffffff;
             padding: 0.75rem 1.5rem;
             text-decoration: none;
+            border: none;
             border-radius: 6px;
             font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
             transition: background-color 0.2s ease;
+            width: 100%;
+            margin-top: 0.5rem;
         }
 
         .btn:hover {
@@ -64,8 +103,24 @@
 
     <div class="welcome-card">
         <h1>Welcome!</h1>
-        <p>Your Django template is set up and loading correctly. Click below to continue.</p>
-        <a href="#about" class="btn">Get Started</a>
+        <p>Your Django template is set up and loading correctly. Fill out the form below to get started.</p>
+
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Your message..." rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn">Submit</button>
+        </form>
     </div>
 
 </body>
