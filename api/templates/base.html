@@ -267,35 +267,32 @@
 </head>
 <body>
 
-    <!--
-      Home links use the relative path /home/ (NOT http://localhost).
-      Relative paths keep the current host + port (e.g. localhost:8081).
-    -->
     <header class="navbar">
         <div class="nav-inner">
-            <a href="/home/" class="logo">Learn<span>Hub</span></a>
+            <!-- Home goes to / which works on localhost:8081 -->
+            <a href="/" class="logo">Learn<span>Hub</span></a>
             <ul class="nav-links">
                 <li>
-                    <a href="/home/"
+                    <a href="/"
                        class="{% if request.path == '/' or request.path == '/home/' %}active{% endif %}">
                         Home
                     </a>
                 </li>
                 <li>
                     <a href="/topics/"
-                       class="{% if request.path == '/topics/' %}active{% endif %}">
+                       class="{% if '/topics' in request.path %}active{% endif %}">
                         Topics
                     </a>
                 </li>
                 <li>
                     <a href="/about/"
-                       class="{% if request.path == '/about/' %}active{% endif %}">
+                       class="{% if '/about' in request.path %}active{% endif %}">
                         About Us
                     </a>
                 </li>
                 <li>
                     <a href="/contact/"
-                       class="{% if request.path == '/contact/' %}active{% endif %}">
+                       class="{% if '/contact' in request.path %}active{% endif %}">
                         Contact
                     </a>
                 </li>
