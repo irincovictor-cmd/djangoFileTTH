@@ -3,30 +3,32 @@
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-<h1 class="page-title">About Us</h1>
-<p class="page-sub">Who we are and why this site exists.</p>
+<div class="page-center">
+    <h1 class="page-title">About Us</h1>
+    <p class="page-sub">Who we are and why this site exists.</p>
 
-<div class="content-box">
-    <p>
-        <strong>LearnHub</strong> is a simple educational website built with Django.
-        It was created as a student project to practice routing, templates, and clean page layout.
-    </p>
-    <p>
-        The goal is to help beginners understand web development concepts —
-        especially Django views, URLs, and templates — through a small, readable site.
-    </p>
-    <p>
-        <strong>Developer:</strong> Victor James M. Irinco<br>
-        <strong>Course:</strong> BSIT — 3rd year<br>
-        <strong>School:</strong> Cristal e-College, Tawala, Panglao, Bohol
-    </p>
-    <p style="margin-bottom: 0;">
-        This project is for learning. Feel free to explore the Topics page and reach out via Contact.
-    </p>
-</div>
+    <div class="content-box">
+        <p>
+            <strong>LearnHub</strong> is a simple educational website built with Django.
+            It was created as a student project to practice routing, templates, and clean page layout.
+        </p>
+        <p>
+            The goal is to help beginners understand web development concepts —
+            especially Django views, URLs, and templates — through a small, readable site.
+        </p>
+        <p>
+            <strong>Developer:</strong> Victor James M. Irinco<br>
+            <strong>Course:</strong> BSIT — 3rd year<br>
+            <strong>School:</strong> Cristal e-College, Tawala, Panglao, Bohol
+        </p>
+        <p style="margin-bottom: 0;">
+            This project is for learning. Feel free to explore the Topics page and reach out via Contact.
+        </p>
+    </div>
 
-<div style="margin-top: 1.5rem;">
-    <a href="/topics/" class="btn btn-primary">Explore topics</a>
-    <a href="/contact/" class="btn btn-ghost" style="margin-left: 0.5rem;">Contact</a>
+    <div class="actions-row">
+        <a href="/topics/" class="btn btn-primary">Explore topics</a>
+        <a href="/contact/" class="btn btn-ghost">Contact</a>
+    </div>
 </div>
 {% endblock %}
