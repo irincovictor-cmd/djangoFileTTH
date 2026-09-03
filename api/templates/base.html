@@ -28,7 +28,6 @@
             flex-direction: column;
         }
 
-        /* ---------- NAVBAR ---------- */
         .navbar {
             background: var(--card);
             border-bottom: 1px solid var(--line);
@@ -78,7 +77,6 @@
             background: #eff6ff;
         }
 
-        /* ---------- BUTTONS / CTA ---------- */
         .btn {
             display: inline-block;
             padding: 0.75rem 1.4rem;
@@ -108,7 +106,6 @@
             background: #eff6ff;
         }
 
-        /* ---------- LAYOUT ---------- */
         main {
             flex: 1;
             max-width: 1100px;
@@ -127,7 +124,6 @@
             margin-bottom: 2rem;
         }
 
-        /* ---------- HERO (Home CTA) ---------- */
         .hero {
             display: grid;
             gap: 2rem;
@@ -182,7 +178,6 @@
             font-weight: 700;
         }
 
-        /* ---------- CARDS / TOPICS ---------- */
         .grid {
             display: grid;
             gap: 1.25rem;
@@ -216,7 +211,6 @@
         .card h3 { margin-bottom: 0.4rem; font-size: 1.15rem; }
         .card p { color: var(--muted); font-size: 0.95rem; }
 
-        /* ---------- ABOUT / CONTACT ---------- */
         .content-box {
             background: var(--card);
             border: 1px solid var(--line);
@@ -261,7 +255,6 @@
             margin-bottom: 1rem;
         }
 
-        /* ---------- FOOTER ---------- */
         footer {
             border-top: 1px solid var(--line);
             background: var(--card);
@@ -274,15 +267,38 @@
 </head>
 <body>
 
-    <!-- NAVBAR: Home | Topics | About Us | Contact -->
+    <!--
+      Home links use the relative path /home/ (NOT http://localhost).
+      Relative paths keep the current host + port (e.g. localhost:8081).
+    -->
     <header class="navbar">
         <div class="nav-inner">
-            <a href="{% url 'home' %}" class="logo">Learn<span>Hub</span></a>
+            <a href="/home/" class="logo">Learn<span>Hub</span></a>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
-                <li><a href="{% url 'topics' %}" class="{% if request.resolver_match.url_name == 'topics' %}active{% endif %}">Topics</a></li>
-                <li><a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">About Us</a></li>
-                <li><a href="{% url 'contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a></li>
+                <li>
+                    <a href="/home/"
+                       class="{% if request.path == '/' or request.path == '/home/' %}active{% endif %}">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/topics/"
+                       class="{% if request.path == '/topics/' %}active{% endif %}">
+                        Topics
+                    </a>
+                </li>
+                <li>
+                    <a href="/about/"
+                       class="{% if request.path == '/about/' %}active{% endif %}">
+                        About Us
+                    </a>
+                </li>
+                <li>
+                    <a href="/contact/"
+                       class="{% if request.path == '/contact/' %}active{% endif %}">
+                        Contact
+                    </a>
+                </li>
             </ul>
         </div>
     </header>
