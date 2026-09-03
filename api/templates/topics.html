@@ -4,45 +4,21 @@
 
 {% block content %}
 <h1 class="page-title">Topics</h1>
-<p class="page-sub">Browse beginner-friendly lessons you can study at your own pace.</p>
+<p class="page-sub">Browse lessons loaded from the database — click one to read more.</p>
 
+{% if topics %}
 <div class="grid">
-    <article class="card">
-        <span class="tag">Basics</span>
-        <h3>What is Django?</h3>
-        <p>A Python web framework for building sites and APIs quickly with a clear structure.</p>
-    </article>
-
-    <article class="card">
-        <span class="tag">Routing</span>
-        <h3>URLs & Views</h3>
-        <p>Map a path like <code>/topics/</code> to a Python function that returns a page.</p>
-    </article>
-
-    <article class="card">
-        <span class="tag">Templates</span>
-        <h3>HTML with Django</h3>
-        <p>Use base templates, blocks, and the <code>url</code> template tag for reusable layouts.</p>
-    </article>
-
-    <article class="card">
-        <span class="tag">Forms</span>
-        <h3>User input</h3>
-        <p>Collect data with forms, validate it, and show messages back to the user.</p>
-    </article>
-
-    <article class="card">
-        <span class="tag">Database</span>
-        <h3>Models & migrations</h3>
-        <p>Define tables in Python and apply them with <code>makemigrations</code> and <code>migrate</code>.</p>
-    </article>
-
-    <article class="card">
-        <span class="tag">Git</span>
-        <h3>Save your work</h3>
-        <p>Push to GitHub often so lab PC wipes do not erase your progress.</p>
-    </article>
+    {% for topic in topics %}
+    <a href="/topics/{{ topic.id }}/" class="card" style="text-decoration: none; color: inherit; display: block;">
+        <span class="tag">{{ topic.tag }}</span>
+        <h3>{{ topic.title }}</h3>
+        <p>{{ topic.summary }}</p>
+    </a>
+    {% endfor %}
 </div>
+{% else %}
+<p class="page-sub">No topics yet. Run migrations or add some in the admin.</p>
+{% endif %}
 
 <div style="margin-top: 2.5rem; text-align: center;">
     <p class="page-sub" style="margin-bottom: 1rem;">Ready to practice?</p>
