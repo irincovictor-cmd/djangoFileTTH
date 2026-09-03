@@ -3,48 +3,54 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <div>
-        <h1>Learn web development<br>the <em>practical</em> way</h1>
-        <p>
-            LearnHub is a simple educational site for BSIT students.
-            Explore topics on Django, HTML, and building real projects step by step.
-        </p>
-        <div class="cta-row">
-            <a href="/topics/" class="btn btn-primary">Start learning</a>
-            <a href="/contact/" class="btn btn-ghost">Contact us</a>
+<div class="page">
+    <section class="hero">
+        <div>
+            <span class="eyebrow">BSIT web development notes</span>
+            <h1>Learn web development the practical way</h1>
+            <p>
+                LearnHub is a simple educational site for BSIT students.
+                Explore topics on Django, HTML, and building real projects step by step.
+            </p>
+            <div class="cta-row">
+                <a href="/topics/" class="btn btn-primary">Start learning</a>
+                <a href="/contact/" class="btn btn-ghost">Contact us</a>
+            </div>
         </div>
-    </div>
 
-    <div class="hero-card">
-        <h3>What you get</h3>
-        <ul>
-            <li>Clear beginner topics</li>
-            <li>Django & web basics</li>
-            <li>Project-ready ideas</li>
-            <li>Free to explore</li>
-        </ul>
-    </div>
-</section>
+        <div class="hero-card">
+            <h3>What you get</h3>
+            <ul>
+                <li>Clear beginner topics</li>
+                <li>Django &amp; web basics</li>
+                <li>Project-ready ideas</li>
+                <li>Free to explore</li>
+            </ul>
+        </div>
+    </section>
 
-<section>
-    <h2 class="page-title" style="font-size:1.4rem; margin-bottom:1rem;">Featured topics</h2>
-    <div class="grid">
-        <div class="card">
-            <span class="tag">Django</span>
-            <h3>Views & Templates</h3>
-            <p>How URLs connect to views and HTML templates.</p>
+    <section>
+        <h2 class="page-title" style="font-size:1.35rem; margin-bottom:1.1rem;">Featured topics</h2>
+        <div class="grid">
+            <div class="card">
+                <span class="punch"></span>
+                <span class="tag">Django</span>
+                <h3>Views &amp; Templates</h3>
+                <p>How URLs connect to views and HTML templates.</p>
+            </div>
+            <div class="card">
+                <span class="punch"></span>
+                <span class="tag">HTML / CSS</span>
+                <h3>Page structure</h3>
+                <p>Navbar, sections, and responsive layout basics.</p>
+            </div>
+            <div class="card">
+                <span class="punch"></span>
+                <span class="tag">Projects</span>
+                <h3>Build &amp; deploy</h3>
+                <p>From local code to GitHub and Docker.</p>
+            </div>
         </div>
-        <div class="card">
-            <span class="tag">HTML / CSS</span>
-            <h3>Page structure</h3>
-            <p>Navbar, sections, and responsive layout basics.</p>
-        </div>
-        <div class="card">
-            <span class="tag">Projects</span>
-            <h3>Build & deploy</h3>
-            <p>From local code to GitHub and Docker.</p>
-        </div>
-    </div>
-</section>
+    </section>
+</div>
 {% endblock %}

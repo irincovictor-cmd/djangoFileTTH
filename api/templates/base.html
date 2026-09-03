@@ -1,134 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LearnHub{% endblock %} | Educational Site</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --accent: #34d399;
-            --text: #f1f5f9;
-            --muted: #94a3b8;
-            --card: rgba(255, 255, 255, 0.92);
-            --card-text: #0f172a;
-            --line: rgba(255, 255, 255, 0.2);
+            --paper: #F5EEDD;
+            --paper-card: #FBF7EC;
+            --paper-deep: #ECE1C6;
+            --rule: #C3CFDD;
+            --margin: #9C3B2C;
+            --margin-soft: rgba(156, 59, 44, 0.35);
+            --ink: #232A3B;
+            --ink-soft: #5C6472;
+            --ink-faint: #8992A0;
+            --highlight: #E2B93B;
+            --line: rgba(34, 40, 58, 0.14);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            /* Contrasting background so white/glass cards stand out */
-            background:
-                radial-gradient(ellipse at 20% 20%, #1e3a5f 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, #0f766e 0%, transparent 45%),
-                linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            background-attachment: fixed;
-            color: var(--text);
-            line-height: 1.6;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.65;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        h1,
+        h2,
+        h3 {
+            font-family: 'Source Serif 4', Georgia, serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--margin);
+            outline-offset: 3px;
+            border-radius: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.001ms !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+
+        /* ---------- Navbar ---------- */
+
         .navbar {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--line);
+            background: var(--ink);
+            border-bottom: 3px solid var(--margin);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .nav-inner {
-            max-width: 1100px;
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 0.9rem 1.25rem;
+            padding: 0.85rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .logo {
-            font-weight: 800;
-            font-size: 1.25rem;
-            color: #fff;
+            display: inline-block;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--ink);
             text-decoration: none;
+            background: var(--highlight);
+            padding: 0.3rem 0.75rem 0.25rem;
+            transform: rotate(-1.5deg);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
         }
-
-        .logo span { color: var(--accent); }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 0.25rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
         }
 
         .nav-links a {
+            position: relative;
             text-decoration: none;
-            color: var(--muted);
+            color: #C8CDD8;
             font-weight: 500;
-            padding: 0.45rem 0.85rem;
-            border-radius: 8px;
-            transition: 0.15s;
+            font-size: 0.95rem;
+            padding: 0.3rem 0.05rem;
         }
 
-        .nav-links a:hover,
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 100%;
+            bottom: -2px;
+            height: 2px;
+            background: var(--highlight);
+            transition: right 0.18s ease;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            right: 0;
+        }
+
         .nav-links a.active {
             color: #fff;
-            background: rgba(59, 130, 246, 0.25);
         }
+
+        /* ---------- Buttons ---------- */
 
         .btn {
             display: inline-block;
-            padding: 0.75rem 1.4rem;
-            border-radius: 10px;
+            padding: 0.7rem 1.4rem;
+            border-radius: 3px;
             font-weight: 600;
+            font-size: 0.95rem;
             text-decoration: none;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
-            transition: 0.15s;
+            font-family: inherit;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: #fff;
+            background: var(--ink);
+            color: var(--paper-card);
+            box-shadow: 3px 3px 0 var(--margin);
         }
 
-        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0 var(--margin);
+        }
 
         .btn-ghost {
             background: transparent;
-            color: #fff;
-            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: var(--ink);
+            border: 1.5px dashed var(--ink-soft);
         }
 
         .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #fff;
+            border-color: var(--ink);
+            background: rgba(34, 40, 58, 0.04);
         }
+
+        /* ---------- Page frame: ruled notebook page ---------- */
 
         main {
             flex: 1;
-            max-width: 1100px;
             width: 100%;
-            margin: 0 auto;
-            padding: 2rem 1.25rem 3rem;
         }
 
-        /* Center About / Contact content */
+        .page {
+            max-width: 1080px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 1.75rem 3.5rem;
+            position: relative;
+        }
+
+        .page::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0.9rem;
+            width: 2px;
+            background: var(--margin-soft);
+        }
+
+        @media (max-width: 640px) {
+            .page::before {
+                display: none;
+            }
+
+            .page {
+                padding-left: 1.25rem;
+            }
+        }
+
         .page-center {
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
             width: 100%;
+        }
+
+        .page-title {
+            font-size: 2.1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--ink);
         }
 
         .page-center .page-title,
@@ -136,244 +236,300 @@
             text-align: center;
         }
 
-        .page-title {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
+        .page-sub {
+            color: var(--ink-soft);
+            margin-bottom: 2rem;
+            max-width: 60ch;
         }
 
-        .page-sub {
-            color: var(--muted);
-            margin-bottom: 2rem;
+        .eyebrow {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--margin);
+            margin-bottom: 0.6rem;
         }
+
+        /* ---------- Hero (home) ---------- */
 
         .hero {
             display: grid;
-            gap: 2rem;
+            gap: 2.5rem;
             align-items: center;
-            padding: 2rem 0 3rem;
+            padding: 1.5rem 0 3.5rem;
         }
 
         @media (min-width: 768px) {
-            .hero { grid-template-columns: 1.2fr 1fr; }
+            .hero {
+                grid-template-columns: 1.15fr 1fr;
+            }
         }
 
         .hero h1 {
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            line-height: 1.2;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-
-        .hero h1 em {
-            font-style: normal;
-            color: var(--accent);
+            font-size: clamp(2rem, 4.2vw, 2.85rem);
+            line-height: 1.25;
+            font-weight: 700;
+            margin-bottom: 1.1rem;
+            color: var(--ink);
         }
 
         .hero p {
-            color: var(--muted);
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            max-width: 36ch;
+            color: var(--ink-soft);
+            font-size: 1.08rem;
+            margin-bottom: 1.6rem;
+            max-width: 42ch;
         }
 
         .cta-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
+            gap: 0.85rem;
         }
 
         .hero-card {
-            background: linear-gradient(145deg, #1d4ed8, #059669);
-            color: #fff;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: var(--paper-card);
+            color: var(--ink);
+            border: 1.5px solid var(--line);
+            border-radius: 4px;
+            padding: 1.75rem 1.75rem 1.5rem;
+            box-shadow: 4px 4px 0 var(--paper-deep), 4px 4px 0 1.5px var(--line);
+            transform: rotate(1deg);
         }
 
-        .hero-card h3 { margin-bottom: 0.75rem; }
+        .hero-card::before {
+            content: "";
+            display: block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--margin);
+            margin-bottom: 1rem;
+        }
+
+        .hero-card h3 {
+            margin-bottom: 0.9rem;
+            font-size: 1.05rem;
+        }
+
         .hero-card ul {
             list-style: none;
             display: grid;
-            gap: 0.5rem;
+            gap: 0.6rem;
             text-align: left;
+            color: var(--ink-soft);
         }
+
+        .hero-card li {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
         .hero-card li::before {
-            content: "✓ ";
+            content: "✓";
             font-weight: 700;
+            color: var(--margin);
+            font-family: 'IBM Plex Mono', monospace;
         }
+
+        /* ---------- Topic grid / index cards ---------- */
 
         .grid {
             display: grid;
-            gap: 1.25rem;
+            gap: 1.4rem;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
         }
 
         .card {
-            background: var(--card);
-            color: var(--card-text);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 14px;
-            padding: 1.5rem;
-            transition: 0.15s;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            position: relative;
+            background: var(--paper-card);
+            color: var(--ink);
+            border: 1.5px solid var(--line);
+            border-radius: 4px;
+            padding: 1.6rem 1.5rem 1.5rem;
+            text-decoration: none;
+            display: block;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 2px 2px 0 var(--line);
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            transform: translate(-2px, -3px) rotate(-0.4deg);
+            box-shadow: 5px 6px 0 var(--line);
+        }
+
+        .card .punch {
+            position: absolute;
+            top: 0.85rem;
+            right: 0.9rem;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--paper);
+            border: 1.5px solid var(--line);
         }
 
         .card .tag {
             display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            background: #dbeafe;
-            padding: 0.2rem 0.55rem;
-            border-radius: 999px;
-            margin-bottom: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--margin);
+            border: 1px solid var(--margin-soft);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            margin-bottom: 0.85rem;
         }
 
-        .card h3 { margin-bottom: 0.4rem; font-size: 1.15rem; }
-        .card p { color: #475569; font-size: 0.95rem; }
+        .card h3 {
+            margin-bottom: 0.45rem;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
 
-        /* Solid content box (About) */
+        .card p {
+            color: var(--ink-soft);
+            font-size: 0.95rem;
+        }
+
+        /* ---------- Content box (About, detail pages) ---------- */
+
         .content-box {
-            background: var(--card);
-            color: var(--card-text);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 16px;
-            padding: 1.75rem;
+            background: var(--paper-card);
+            color: var(--ink);
+            border: 1.5px solid var(--line);
+            border-left: 3px solid var(--margin);
+            border-radius: 4px;
+            padding: 1.9rem 2rem;
             max-width: 640px;
             width: 100%;
             text-align: left;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
         }
 
-        .content-box p { margin-bottom: 1rem; color: #475569; }
-        .content-box strong { color: var(--card-text); }
+        .content-box p {
+            margin-bottom: 1rem;
+            color: var(--ink-soft);
+            line-height: 1.7;
+        }
 
-        /* Glassmorphism card (Contact form) */
+        .content-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-box strong {
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        /* ---------- Contact worksheet ---------- */
+
         .glass-card {
             width: 100%;
             max-width: 480px;
-            padding: 2rem;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow:
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            padding: 2rem 2.1rem;
+            border-radius: 4px;
+            background: var(--paper-card);
+            border: 1.5px solid var(--line);
+            border-left: 3px solid var(--margin);
             text-align: left;
         }
 
         .glass-card label {
-            color: #e2e8f0;
+            color: var(--ink);
         }
 
         .glass-card input,
         .glass-card textarea {
             width: 100%;
-            padding: 0.7rem 0.9rem;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
+            padding: 0.55rem 0.1rem;
+            border: none;
+            border-bottom: 1.5px solid var(--ink-faint);
+            background: transparent;
+            color: var(--ink);
             font-size: 1rem;
             font-family: inherit;
-            backdrop-filter: blur(4px);
+            border-radius: 0;
         }
 
         .glass-card input::placeholder,
         .glass-card textarea::placeholder {
-            color: rgba(226, 232, 240, 0.55);
+            color: var(--ink-faint);
         }
 
         .glass-card input:focus,
         .glass-card textarea:focus {
             outline: none;
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.16);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+            border-bottom-color: var(--margin);
         }
 
-        .form-group { margin-bottom: 1rem; }
+        .form-group {
+            margin-bottom: 1.3rem;
+        }
 
         .form-group label {
             display: block;
-            font-weight: 600;
-            margin-bottom: 0.35rem;
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.65rem 0.85rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            font-size: 0.82rem;
+            color: var(--ink-soft);
         }
 
         .success {
-            background: rgba(16, 185, 129, 0.2);
-            color: #a7f3d0;
-            border: 1px solid rgba(52, 211, 153, 0.4);
+            background: rgba(156, 59, 44, 0.08);
+            color: var(--margin);
+            border: 1px solid var(--margin-soft);
+            border-radius: 3px;
             padding: 0.85rem 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
         }
 
         .actions-row {
-            margin-top: 1.5rem;
+            margin-top: 1.75rem;
             display: flex;
             flex-wrap: wrap;
             gap: 0.75rem;
             justify-content: center;
         }
 
+        /* ---------- Footer ---------- */
+
         footer {
-            border-top: 1px solid var(--line);
-            background: rgba(15, 23, 42, 0.8);
-            padding: 1.5rem 1.25rem;
+            border-top: 3px solid var(--margin);
+            background: var(--ink);
+            padding: 1.5rem 1.5rem;
             text-align: center;
-            color: var(--muted);
-            font-size: 0.9rem;
+            color: #9BA2B0;
+            font-size: 0.88rem;
         }
     </style>
 </head>
+
 <body>
 
     <header class="navbar">
         <div class="nav-inner">
-            <a href="/" class="logo">Learn<span>Hub</span></a>
+            <a href="/" class="logo">LearnHub</a>
             <ul class="nav-links">
                 <li>
-                    <a href="/"
-                       class="{% if request.path == '/' or request.path == '/home/' %}active{% endif %}">
+                    <a href="/" class="{% if request.path == '/' or request.path == '/home/' %}active{% endif %}">
                         Home
                     </a>
                 </li>
                 <li>
-                    <a href="/topics/"
-                       class="{% if '/topics' in request.path %}active{% endif %}">
+                    <a href="/topics/" class="{% if '/topics' in request.path %}active{% endif %}">
                         Topics
                     </a>
                 </li>
                 <li>
-                    <a href="/about/"
-                       class="{% if '/about' in request.path %}active{% endif %}">
+                    <a href="/about/" class="{% if '/about' in request.path %}active{% endif %}">
                         About Us
                     </a>
                 </li>
                 <li>
-                    <a href="/contact/"
-                       class="{% if '/contact' in request.path %}active{% endif %}">
+                    <a href="/contact/" class="{% if '/contact' in request.path %}active{% endif %}">
                         Contact
                     </a>
                 </li>
@@ -386,8 +542,9 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 LearnHub — Built with Django for learning.</p>
+        <p>&copy; 2026 LearnHub. Built with Django for learning.</p>
     </footer>
 
 </body>
+
 </html>

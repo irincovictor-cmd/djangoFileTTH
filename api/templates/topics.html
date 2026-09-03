@@ -3,25 +3,28 @@
 {% block title %}Topics{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Topics</h1>
-<p class="page-sub">Browse lessons loaded from the database — click one to read more.</p>
+<div class="page">
+    <h1 class="page-title">Topics</h1>
+    <p class="page-sub">Browse lessons loaded from the database — click one to read more.</p>
 
-{% if topics %}
-<div class="grid">
-    {% for topic in topics %}
-    <a href="/topics/{{ topic.id }}/" class="card" style="text-decoration: none; color: inherit; display: block;">
-        <span class="tag">{{ topic.tag }}</span>
-        <h3>{{ topic.title }}</h3>
-        <p>{{ topic.summary }}</p>
-    </a>
-    {% endfor %}
-</div>
-{% else %}
-<p class="page-sub">No topics yet. Run migrations or add some in the admin.</p>
-{% endif %}
+    {% if topics %}
+    <div class="grid">
+        {% for topic in topics %}
+        <a href="/topics/{{ topic.id }}/" class="card">
+            <span class="punch"></span>
+            <span class="tag">{{ topic.tag }}</span>
+            <h3>{{ topic.title }}</h3>
+            <p>{{ topic.summary }}</p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="page-sub">No topics yet. Run migrations or add some in the admin.</p>
+    {% endif %}
 
-<div style="margin-top: 2.5rem; text-align: center;">
-    <p class="page-sub" style="margin-bottom: 1rem;">Ready to practice?</p>
-    <a href="/contact/" class="btn btn-primary">Ask a question</a>
+    <div style="margin-top: 2.75rem; text-align: center;">
+        <p class="page-sub" style="margin-bottom: 1rem;">Ready to practice?</p>
+        <a href="/contact/" class="btn btn-primary">Ask a question</a>
+    </div>
 </div>
 {% endblock %}
