@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Topics{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Topics</h1>
+<p class="page-sub">Browse beginner-friendly lessons you can study at your own pace.</p>
+
+<div class="grid">
+    <article class="card">
+        <span class="tag">Basics</span>
+        <h3>What is Django?</h3>
+        <p>A Python web framework for building sites and APIs quickly with a clear structure.</p>
+    </article>
+
+    <article class="card">
+        <span class="tag">Routing</span>
+        <h3>URLs & Views</h3>
+        <p>Map a path like <code>/topics/</code> to a Python function that returns a page.</p>
+    </article>
+
+    <article class="card">
+        <span class="tag">Templates</span>
+        <h3>HTML with Django</h3>
+        <p>Use base templates, blocks, and <code>{% url %}</code> for reusable layouts.</p>
+    </article>
+
+    <article class="card">
+        <span class="tag">Forms</span>
+        <h3>User input</h3>
+        <p>Collect data with forms, validate it, and show messages back to the user.</p>
+    </article>
+
+    <article class="card">
+        <span class="tag">Database</span>
+        <h3>Models & migrations</h3>
+        <p>Define tables in Python and apply them with <code>makemigrations</code> and <code>migrate</code>.</p>
+    </article>
+
+    <article class="card">
+        <span class="tag">Git</span>
+        <h3>Save your work</h3>
+        <p>Push to GitHub often so lab PC wipes do not erase your progress.</p>
+    </article>
+</div>
+
+<div style="margin-top: 2.5rem; text-align: center;">
+    <p class="page-sub" style="margin-bottom: 1rem;">Ready to practice?</p>
+    <a href="{% url 'contact' %}" class="btn btn-primary">Ask a question</a>
+</div>
+{% endblock %}
