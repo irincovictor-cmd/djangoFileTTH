@@ -14,6 +14,19 @@
 
         <div class="content-box" style="margin-top: 0.5rem;">
             <p style="white-space: pre-line;">{{ topic.body }}</p>
+
+            {% if topic.resource_url %}
+            <p style="margin-top: 1.5rem; margin-bottom: 0; padding-top: 1.25rem; border-top: 1px dashed var(--line);">
+                <strong style="display: block; margin-bottom: 0.5rem;">Want to study more?</strong>
+                <a href="{{ topic.resource_url }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn btn-primary"
+                   style="margin-top: 0.35rem;">
+                    {{ topic.resource_label|default:"Learn more" }} →
+                </a>
+            </p>
+            {% endif %}
         </div>
 
         <div class="actions-row">
