@@ -1,5 +1,105 @@
-config 
->urls.py
-api
->view.py
->urls.py
+============================================================
+  LEARNHUB — ROUTING GUIDE (how a request becomes a page)
+============================================================
+
+When a user opens a URL (example: http://localhost:8081/topics/),
+Django follows this sequence:
+
+
+1) config/urls.py          (PROJECT — starting point)
+   ------------------------------------------------
+   ROOT_URLCONF points here first.
+
+   path('admin/', admin.site.urls)     → Django admin
+   path('', include('api.urls'))       → hand off to the api app
+
+   So every normal site page goes through api/urls.py next.
+
+
+2) api/urls.py             (APP — match the path)
+   ------------------------------------------------
+   Django looks for a path that matches the URL.
+
+   path('', views.home, name='home')
+   path('home/', views.home, name='home_page')
+   path('topics/', views.topics, name='topics')
+   path('topics/<int:pk>/', views.topic_detail, name='topic_detail')
+   path('about/', views.about, name='about')
+   path('contact/', views.contact, name='contact')
+
+   Example:
+     /topics/     → views.topics
+     /topics/3/   → views.topic_detail  (pk = 3)
+     /about/      → views.about
+
+
+3) api/views.py            (APP — run the view)
+   ------------------------------------------------
+   The matched function runs.
+
+   - May read the database (e.g. Topic.objects.all())
+   - Calls render(request, 'template_name.html', context)
+   - Returns an HTTP response
+
+
+4) api/templates/          (HTML the user sees)
+   ------------------------------------------------
+   templates extend base.html (navbar + CSS + footer).
+   Each page fills {% block content %}.
+
+   home.html, topics.html, topic_detail.html,
+   about.html, contact.html
+
+
+------------------------------------------------------------
+  FLOW DIAGRAM
+------------------------------------------------------------
+
+  Browser
+     |
+     |  GET /topics/
+     v
+  config/urls.py  ──include──>  api/urls.py
+                                    |
+                                    |  path matches 'topics/'
+                                    v
+                               api/views.py  (topics)
+                                    |
+                                    |  render(...)
+                                    v
+                               topics.html + base.html
+                                    |
+                                    v
+                               HTML back to browser
+
+
+------------------------------------------------------------
+  FILES INVOLVED (short map)
+------------------------------------------------------------
+
+  config/
+    urls.py          ← start here (project routes)
+
+  api/
+    urls.py          ← path → view mapping
+    views.py         ← logic + render template
+    models.py        ← database (Topic, etc.)
+    templates/       ← HTML pages
+      base.html
+      home.html
+      topics.html
+      ...
+
+
+------------------------------------------------------------
+  REMEMBER
+------------------------------------------------------------
+
+  Order is always:
+
+    config/urls.py  →  api/urls.py  →  api/views.py  →  template
+
+  URLs first, then views — not the other way around.
+  <int:pk> captures a number from the URL for detail pages.
+
+============================================================
