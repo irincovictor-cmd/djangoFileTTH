@@ -11,6 +11,19 @@ class Topic(models.Model):
     tag = models.CharField(max_length=50, help_text="Short label, e.g. Django, Git")
     summary = models.TextField(help_text="Short description on the topics list")
     body = models.TextField(help_text="Longer explanation on the detail page")
+
+    # Optional external link for "study more"
+    resource_url = models.URLField(
+        blank=True,
+        help_text="Link to docs or a video for deeper study (leave blank if none)",
+    )
+    resource_label = models.CharField(
+        max_length=100,
+        blank=True,
+        default="Learn more",
+        help_text="Button text, e.g. Official Django docs",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
