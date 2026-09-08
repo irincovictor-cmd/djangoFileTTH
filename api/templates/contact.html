@@ -7,12 +7,12 @@
     <div class="page-center">
         <span class="eyebrow">Get in touch</span>
         <h1 class="page-title">Contact</h1>
-        <p class="page-sub">Send a message — for this demo, it is shown on the page (not emailed yet).</p>
+        <p class="page-sub">Leave your details so we can reach you.</p>
 
         <div class="glass-card">
             {% if success %}
                 <div class="success">
-                    Thanks, <strong>{{ name }}</strong>! We received your message.
+                    Thanks, <strong>{{ name }}</strong>! We received your contact details.
                 </div>
             {% endif %}
 
@@ -32,12 +32,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="4" required
-                              placeholder="How can we help?">{{ request.POST.message }}</textarea>
+                    <label for="contact_number">Contact number</label>
+                    <input type="tel" id="contact_number" name="contact_number" required
+                           value="{{ request.POST.contact_number }}"
+                           placeholder="e.g. 09XX XXX XXXX"
+                           inputmode="tel"
+                           autocomplete="tel">
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Send message</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit</button>
             </form>
         </div>
     </div>
