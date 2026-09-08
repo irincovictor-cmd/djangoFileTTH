@@ -37,13 +37,18 @@ def about(request):
 def contact(request):
     """
     Contact page.
+    Fields: name, email, contact_number.
     GET  → show the form
-    POST → show a simple success message (no real email yet)
+    POST → show a simple success message (not saved/emailed yet)
     """
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        contact_number = request.POST.get('contact_number', '').strip()
         return render(request, 'contact.html', {
             'success': True,
             'name': name,
+            'email': email,
+            'contact_number': contact_number,
         })
     return render(request, 'contact.html')
