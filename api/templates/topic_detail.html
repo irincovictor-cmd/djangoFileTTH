@@ -3,6 +3,32 @@
 {% block title %}{{ topic.title }}{% endblock %}
 
 {% block content %}
+<style>
+    .resource-note {
+        margin-top: 1.35rem;
+        padding-top: 1.1rem;
+        border-top: 1px dashed var(--line);
+    }
+    .resource-note-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--ink-soft);
+        margin-bottom: 0.3rem;
+    }
+    .resource-link {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: var(--margin);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 1px;
+    }
+    .resource-link:hover {
+        color: var(--ink);
+    }
+</style>
+
 <div class="page">
     <div class="page-center">
         <p class="page-sub" style="margin-bottom: 0.5rem;">
