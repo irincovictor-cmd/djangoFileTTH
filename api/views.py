@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Topic
 from .forms import ContactForm
 
@@ -33,23 +33,20 @@ def contact(request):
     """
     Contact page using ContactForm (ModelForm).
     GET  → empty form
-    POST → validate, save to DB, show success
+    POST → validate, save to DB, redirect to success page
+    (Matches the course pattern: redirect("contact_success"))
     """
-    success = False
-    saved_name = None
-
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            entry = form.save()  # writes to Contact table
-            success = True
-            saved_name = entry.name
-            form = ContactForm()  # clear form after success
+            form.save()  # store in database (extra vs bare sample)
+            return redirect('contact_success')
     else:
         form = ContactForm()
 
-    return render(request, 'contact.html', {
-        'form': form,
-        'success': success,
-        'name': saved_name,
-    })
+    return render(request, 'contact.html', {'form': form})
+
+
+def contact_success(request):
+    """Shown after a successful contact form submit."""
+    return render(request, 'contact_success.html')
