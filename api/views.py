@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Topic
+from .forms import ContactForm
 
 
 def home(request):
@@ -8,10 +9,7 @@ def home(request):
 
 
 def topics(request):
-    """
-    Topics list — loaded from the database (Topic model).
-    Not hard-coded HTML cards anymore.
-    """
+    """Topics list — loaded from the database."""
     all_topics = Topic.objects.all()
     return render(request, 'topics.html', {
         'topics': all_topics,
@@ -19,10 +17,7 @@ def topics(request):
 
 
 def topic_detail(request, pk):
-    """
-    Single topic page.
-    pk = the topic's id from the URL, e.g. /topics/3/
-    """
+    """Single topic page."""
     topic = get_object_or_404(Topic, pk=pk)
     return render(request, 'topic_detail.html', {
         'topic': topic,
@@ -36,19 +31,25 @@ def about(request):
 
 def contact(request):
     """
-    Contact page.
-    Fields: name, email, contact_number.
-    GET  → show the form
-    POST → show a simple success message (not saved/emailed yet)
+    Contact page using ContactForm (ModelForm).
+    GET  → empty form
+    POST → validate, save to DB, show success
     """
+    success = False
+    saved_name = None
+
     if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        email = request.POST.get('email', '').strip()
-        contact_number = request.POST.get('contact_number', '').strip()
-        return render(request, 'contact.html', {
-            'success': True,
-            'name': name,
-            'email': email,
-            'contact_number': contact_number,
-        })
-    return render(request, 'contact.html')
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            entry = form.save()  # writes to Contact table
+            success = True
+            saved_name = entry.name
+            form = ContactForm()  # clear form after success
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {
+        'form': form,
+        'success': success,
+        'name': saved_name,
+    })
