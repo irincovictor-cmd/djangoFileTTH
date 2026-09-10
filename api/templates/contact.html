@@ -10,13 +10,7 @@
         <p class="page-sub">Leave your details so we can reach you. Submissions are saved in the database.</p>
 
         <div class="glass-card">
-            {% if success %}
-                <div class="success">
-                    Thanks, <strong>{{ name }}</strong>! We saved your contact details.
-                </div>
-            {% endif %}
-
-            <form method="post" action="/contact/">
+            <form method="post" action="{% url 'contact' %}">
                 {% csrf_token %}
 
                 {% for field in form %}
