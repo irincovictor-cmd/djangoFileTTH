@@ -12,7 +12,6 @@ class Topic(models.Model):
     summary = models.TextField(help_text="Short description on the topics list")
     body = models.TextField(help_text="Longer explanation on the detail page")
 
-    # Optional external link for "study more"
     resource_url = models.URLField(
         blank=True,
         help_text="Link to docs or a video for deeper study (leave blank if none)",
@@ -31,3 +30,25 @@ class Topic(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Contact(models.Model):
+    """
+    One contact form submission (name, email, phone).
+    Saved when ContactForm is valid and form.save() runs.
+    """
+
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    contact = models.CharField(
+        max_length=30,
+        verbose_name="Contact number",
+        help_text="Phone or mobile number",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
