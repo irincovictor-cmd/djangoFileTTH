@@ -4,10 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Victor James M. Irinco — Portfolio</title>
-  {# Link your CSS after pull if you keep portfolio.css in templates (or move to static/) #}
-  <link rel="stylesheet" href="">
   <style>
-    /* Fallback styles if portfolio.css is missing */
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
     body {
@@ -17,21 +14,46 @@
       color: #e8eaef;
       line-height: 1.5;
     }
-    header { position: sticky; top: 0; backdrop-filter: blur(8px); background: rgba(15,18,32,.85); border-bottom: 1px solid #2a2f45; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(8px);
+      background: rgba(15,18,32,.85);
+      border-bottom: 1px solid #2a2f45;
+    }
     nav {
       max-width: 960px; margin: 0 auto; padding: 1rem 1.25rem;
       display: flex; align-items: center; justify-content: space-between; gap: 1rem;
     }
     .nav-mark a { font-weight: 700; color: inherit; text-decoration: none; }
-    .nav-links { list-style: none; display: flex; gap: 1.25rem; margin: 0; padding: 0; }
+    .nav-links { list-style: none; display: flex; gap: 1.25rem; margin: 0; padding: 0; flex-wrap: wrap; }
     .nav-links a { color: #aeb6d0; text-decoration: none; }
-    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover, .nav-links a.active { color: #fff; }
     main { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
     .hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 .75rem; }
-    .hero p { color: #aeb6d0; max-width: 36rem; }
-    .cta { display: inline-block; margin-top: 1.25rem; padding: .7rem 1.2rem; background: #5b6cff; color: #fff; border-radius: .5rem; text-decoration: none; font-weight: 600; }
-    section { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #2a2f45; }
+    .hero p, .muted { color: #aeb6d0; max-width: 36rem; }
+    .cta {
+      display: inline-block; margin-top: 1.25rem; padding: .7rem 1.2rem;
+      background: #5b6cff; color: #fff; border-radius: .5rem;
+      text-decoration: none; font-weight: 600; border: none; cursor: pointer; font-size: 1rem;
+    }
+    .cta.secondary { background: #2a2f45; margin-left: .5rem; }
+    section { margin-top: 0.5rem; }
     section h2 { margin-top: 0; }
+    .card {
+      margin-top: 1.5rem; padding: 1.5rem;
+      background: rgba(255,255,255,.04);
+      border: 1px solid #2a2f45;
+      border-radius: 1rem;
+      max-width: 28rem;
+    }
+    label { display: block; font-weight: 600; margin-top: 1rem; font-size: .9rem; }
+    input, textarea {
+      width: 100%; margin-top: .35rem; padding: .65rem .75rem;
+      border-radius: .5rem; border: 1px solid #2a2f45;
+      background: #161a2b; color: #e8eaef;
+    }
+    .field-errors { color: #f87171; font-size: .85rem; margin-top: .25rem; }
+    .success-box { text-align: center; padding: 2rem 1rem; }
   </style>
 </head>
 <body>
@@ -41,32 +63,63 @@
         <a href="{% url 'home' %}">Victor James M. Irinco.</a>
       </div>
       <ul class="nav-links">
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'work' %}">Work</a></li>
-        <li><a href="{% url 'about' %}">About</a></li>
-        <li><a href="{% url 'contact' %}">Contact</a></li>
+        <li><a href="{% url 'home' %}" class="{% if section == 'home' %}active{% endif %}">Home</a></li>
+        <li><a href="{% url 'work' %}" class="{% if section == 'work' %}active{% endif %}">Work</a></li>
+        <li><a href="{% url 'about' %}" class="{% if section == 'about' %}active{% endif %}">About</a></li>
+        <li><a href="{% url 'contact' %}" class="{% if section == 'contact' or section == 'contact_success' %}active{% endif %}">Contact</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    {# section comes from the view: home | work | about #}
     {% if section == 'work' %}
       <section id="work">
         <h2>Work</h2>
-        <p>Projects go here. Replace this block with your Laravel Work section markup (Django tags only — no <code>route()</code>).</p>
+        <p class="muted">Projects go here. Paste your Work section design when ready.</p>
       </section>
+
     {% elif section == 'about' %}
       <section id="about">
         <h2>About</h2>
         <p>Victor James M. Irinco · BSIT · Cristal e-College · Tawala, Panglao, Bohol.</p>
       </section>
+
+    {% elif section == 'contact' %}
+      <section id="contact">
+        <h2>Contact</h2>
+        <p class="muted">Send a message. It is saved to the database (Admin → Contacts).</p>
+
+        <div class="card">
+          <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+            {% for field in form %}
+              <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="field-errors">{{ field.errors }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="cta" style="margin-top:1.25rem;width:100%;">Send message</button>
+          </form>
+        </div>
+      </section>
+
+    {% elif section == 'contact_success' %}
+      <section class="success-box">
+        <h2>Message sent</h2>
+        <p class="muted">Thanks — your message was saved.</p>
+        <a class="cta" href="{% url 'home' %}">Back home</a>
+        <a class="cta secondary" href="{% url 'contact' %}">Send another</a>
+      </section>
+
     {% else %}
       <section class="hero" id="home">
         <h1>Hi, I'm Victor.</h1>
-        <p>Portfolio site running on Django. Contact form saves to the database and shows in Admin.</p>
+        <p>Portfolio on Django. Contact form stores name, email, and message in the database.</p>
         <a class="cta" href="{% url 'contact' %}">Get in touch</a>
-        <a class="cta" href="{% url 'work' %}" style="background:#2a2f45;margin-left:.5rem;">See work</a>
+        <a class="cta secondary" href="{% url 'work' %}">See work</a>
       </section>
     {% endif %}
   </main>
