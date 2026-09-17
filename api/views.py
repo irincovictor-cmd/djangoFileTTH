@@ -3,9 +3,12 @@ from .models import Topic
 from .forms import ContactForm
 
 
-def _portfolio(request, section="home"):
-    """Single portfolio template; section mirrors old Laravel portfolio routes."""
-    return render(request, "portfolio.html", {"section": section})
+def _portfolio(request, section="home", extra=None):
+    """Portfolio pages share one template + nav."""
+    ctx = {"section": section}
+    if extra:
+        ctx.update(extra)
+    return render(request, "portfolio.html", ctx)
 
 
 def home(request):
@@ -35,7 +38,7 @@ def topic_detail(request, pk):
 
 
 def contact(request):
-    """name, email, message → Contact table → Admin."""
+    """Portfolio contact section — still saves name/email/message to DB."""
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -44,8 +47,8 @@ def contact(request):
     else:
         form = ContactForm()
 
-    return render(request, "contact.html", {"form": form})
+    return _portfolio(request, "contact", {"form": form})
 
 
 def contact_success(request):
-    return render(request, "contact_success.html")
+    return _portfolio(request, "contact_success")
