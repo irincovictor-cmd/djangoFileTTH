@@ -3,14 +3,25 @@ from .models import Topic
 from .forms import ContactForm
 
 
+def _portfolio(request, section="home"):
+    """Single portfolio template; section mirrors old Laravel portfolio routes."""
+    return render(request, "portfolio.html", {"section": section})
+
+
 def home(request):
-    """Home — prefers portfolio template if present."""
-    return render(request, "portfolio.html")
+    return _portfolio(request, "home")
 
 
 def portfolio(request):
-    """Explicit portfolio route (Laravel-style sections can live in one HTML)."""
-    return render(request, "portfolio.html")
+    return _portfolio(request, "home")
+
+
+def work(request):
+    return _portfolio(request, "work")
+
+
+def about(request):
+    return _portfolio(request, "about")
 
 
 def topics(request):
@@ -23,16 +34,8 @@ def topic_detail(request, pk):
     return render(request, "topic_detail.html", {"topic": topic})
 
 
-def about(request):
-    return render(request, "about.html")
-
-
 def contact(request):
-    """
-    Contact form: name, email, message.
-    POST → validate → save to DB → redirect success.
-    Manage rows in /admin/ → Contacts.
-    """
+    """name, email, message → Contact table → Admin."""
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
