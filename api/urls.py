@@ -2,17 +2,18 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Portfolio / home
+    # Portfolio (Laravel-style section names)
     path("", views.home, name="home"),
     path("home/", views.home, name="home_page"),
     path("portfolio/", views.portfolio, name="portfolio"),
-
-    # LearnHub pages (kept)
-    path("topics/", views.topics, name="topics"),
-    path("topics/<int:pk>/", views.topic_detail, name="topic_detail"),
+    path("work/", views.work, name="work"),
     path("about/", views.about, name="about"),
 
-    # Contact → database + admin
+    # LearnHub
+    path("topics/", views.topics, name="topics"),
+    path("topics/<int:pk>/", views.topic_detail, name="topic_detail"),
+
+    # Contact → DB + admin
     path("contact/", views.contact, name="contact"),
     path("contact/success/", views.contact_success, name="contact_success"),
 ]
