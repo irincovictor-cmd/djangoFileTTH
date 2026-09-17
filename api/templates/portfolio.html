@@ -4,59 +4,383 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Victor James M. Irinco — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <style>
-    :root { color-scheme: dark; }
+    :root {
+      --bg: #07090f;
+      --bg2: #0e1220;
+      --card: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f2f4f8;
+      --muted: #9aa3b8;
+      --accent: #6d7cff;
+      --accent2: #a78bfa;
+      --glow: rgba(109, 124, 255, 0.35);
+      --radius: 1.15rem;
+      --font: "DM Sans", system-ui, sans-serif;
+      --display: "Instrument Serif", Georgia, serif;
+    }
+
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-      background: #0f1220;
-      color: #e8eaef;
-      line-height: 1.5;
+      min-height: 100vh;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
     }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+    }
+    .blob.one {
+      width: 420px; height: 420px;
+      background: var(--accent);
+      top: -120px; right: -80px;
+      opacity: 0.22;
+    }
+    .blob.two {
+      width: 360px; height: 360px;
+      background: var(--accent2);
+      bottom: 10%; left: -100px;
+      opacity: 0.18;
+    }
+    .blob.three {
+      width: 280px; height: 280px;
+      background: #22d3ee;
+      top: 45%; right: 15%;
+      opacity: 0.1;
+    }
+
     header {
-      position: sticky; top: 0; z-index: 10;
-      backdrop-filter: blur(8px);
-      background: rgba(15,18,32,.85);
-      border-bottom: 1px solid #2a2f45;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(7, 9, 15, 0.72);
+      border-bottom: 1px solid var(--card-border);
     }
+
     nav {
-      max-width: 960px; margin: 0 auto; padding: 1rem 1.25rem;
-      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
     }
-    .nav-mark a { font-weight: 700; color: inherit; text-decoration: none; }
-    .nav-links { list-style: none; display: flex; gap: 1.25rem; margin: 0; padding: 0; flex-wrap: wrap; }
-    .nav-links a { color: #aeb6d0; text-decoration: none; }
-    .nav-links a:hover, .nav-links a.active { color: #fff; }
-    main { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
-    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 .75rem; }
-    .hero p, .muted { color: #aeb6d0; max-width: 36rem; }
-    .cta {
-      display: inline-block; margin-top: 1.25rem; padding: .7rem 1.2rem;
-      background: #5b6cff; color: #fff; border-radius: .5rem;
-      text-decoration: none; font-weight: 600; border: none; cursor: pointer; font-size: 1rem;
+
+    .nav-mark a {
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
     }
-    .cta.secondary { background: #2a2f45; margin-left: .5rem; }
-    section { margin-top: 0.5rem; }
-    section h2 { margin-top: 0; }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 0.35rem;
+      margin: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      display: inline-block;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-links a.active {
+      color: var(--text);
+      background: rgba(109, 124, 255, 0.18);
+      box-shadow: inset 0 0 0 1px rgba(109, 124, 255, 0.35);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.85rem;
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: clamp(2.4rem, 6vw, 3.75rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 0 0 1rem;
+    }
+
+    h2 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: clamp(1.9rem, 4vw, 2.5rem);
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 34rem;
+      margin: 0;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.8rem 1.35rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+      font-family: inherit;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: #fff;
+      box-shadow: 0 8px 28px var(--glow);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      box-shadow: inset 0 0 0 1px var(--card-border);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-block { width: 100%; margin-top: 0.5rem; }
+
+    .grid-2 {
+      display: grid;
+      gap: 1.25rem;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .grid-3 {
+      display: grid;
+      gap: 1.25rem;
+      grid-template-columns: 1fr;
+      margin-top: 1.75rem;
+    }
+
     .card {
-      margin-top: 1.5rem; padding: 1.5rem;
-      background: rgba(255,255,255,.04);
-      border: 1px solid #2a2f45;
-      border-radius: 1rem;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.4rem;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(109, 124, 255, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      background: rgba(167, 139, 250, 0.12);
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      margin-bottom: 0.65rem;
+    }
+
+    .about-panel {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (min-width: 800px) {
+      .about-panel {
+        grid-template-columns: 1.2fr 0.8fr;
+        align-items: start;
+      }
+    }
+
+    .stat-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .stat-list li {
+      padding: 1rem 1.15rem;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+    }
+
+    .stat-list strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .form-card {
       max-width: 28rem;
+      margin-top: 1.5rem;
+      padding: 1.5rem 1.6rem 1.75rem;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: calc(var(--radius) + 0.15rem);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
     }
-    label { display: block; font-weight: 600; margin-top: 1rem; font-size: .9rem; }
-    input, textarea {
-      width: 100%; margin-top: .35rem; padding: .65rem .75rem;
-      border-radius: .5rem; border: 1px solid #2a2f45;
-      background: #161a2b; color: #e8eaef;
+
+    .form-card label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.88rem;
+      margin-top: 1rem;
+      margin-bottom: 0.35rem;
     }
-    .field-errors { color: #f87171; font-size: .85rem; margin-top: .25rem; }
-    .success-box { text-align: center; padding: 2rem 1rem; }
+
+    .form-card input,
+    .form-card textarea {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      border-radius: 0.65rem;
+      border: 1px solid var(--card-border);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-card input:focus,
+    .form-card textarea:focus {
+      outline: none;
+      border-color: rgba(109, 124, 255, 0.55);
+      box-shadow: 0 0 0 3px rgba(109, 124, 255, 0.15);
+    }
+
+    .field-errors {
+      color: #f87171;
+      font-size: 0.82rem;
+      margin-top: 0.3rem;
+    }
+
+    .success-wrap {
+      text-align: center;
+      padding: 3rem 1rem;
+      max-width: 28rem;
+      margin: 0 auto;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.25rem;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      font-size: 1.75rem;
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 1.5rem 2.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
   </style>
 </head>
 <body>
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+  <div class="blob three"></div>
+
   <header>
     <nav>
       <div class="nav-mark">
@@ -73,55 +397,110 @@
 
   <main>
     {% if section == 'work' %}
-      <section id="work">
-        <h2>Work</h2>
-        <p class="muted">Projects go here. Paste your Work section design when ready.</p>
-      </section>
+      <span class="eyebrow">Selected work</span>
+      <h2>Projects</h2>
+      <p class="lead">School and personal builds — Laravel, Django, and full-stack practice.</p>
+
+      <div class="grid-3">
+        <article class="card">
+          <span class="tag">Django</span>
+          <h3>LearnHub</h3>
+          <p>Educational site with topics from the database, ModelForm contact, and Docker + Postgres.</p>
+        </article>
+        <article class="card">
+          <span class="tag">Laravel</span>
+          <h3>MyfirstApp</h3>
+          <p>Student / student-details ERD, migrations, MySQL, and admin-style tooling.</p>
+        </article>
+        <article class="card">
+          <span class="tag">Full stack</span>
+          <h3>Web systems</h3>
+          <p>Toolkit, visualizer, and team web system work from coursework.</p>
+        </article>
+      </div>
 
     {% elif section == 'about' %}
-      <section id="about">
-        <h2>About</h2>
-        <p>Victor James M. Irinco · BSIT · Cristal e-College · Tawala, Panglao, Bohol.</p>
-      </section>
+      <span class="eyebrow">About</span>
+      <h2>A bit about me</h2>
+      <div class="about-panel">
+        <div>
+          <p class="lead">
+            BSIT student focused on web development — routing, databases, forms,
+            and shipping small apps with Laravel and Django.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="{% url 'contact' %}">Contact me</a>
+            <a class="btn btn-ghost" href="{% url 'work' %}">View work</a>
+          </div>
+        </div>
+        <ul class="stat-list">
+          <li><strong>Name</strong> Victor James M. Irinco</li>
+          <li><strong>Program</strong> BSIT · 3rd year</li>
+          <li><strong>School</strong> Cristal e-College</li>
+          <li><strong>Location</strong> Tawala, Panglao, Bohol</li>
+        </ul>
+      </div>
 
     {% elif section == 'contact' %}
-      <section id="contact">
-        <h2>Contact</h2>
-        <p class="muted">Send a message. It is saved to the database (Admin → Contacts).</p>
+      <span class="eyebrow">Contact</span>
+      <h2>Let’s talk</h2>
+      <p class="lead">Send a message. It is stored in the database and visible under Admin → Contacts.</p>
 
-        <div class="card">
-          <form method="post" action="{% url 'contact' %}">
-            {% csrf_token %}
-            {% for field in form %}
-              <div>
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                  <div class="field-errors">{{ field.errors }}</div>
-                {% endif %}
-              </div>
-            {% endfor %}
-            <button type="submit" class="cta" style="margin-top:1.25rem;width:100%;">Send message</button>
-          </form>
-        </div>
-      </section>
+      <div class="form-card">
+        <form method="post" action="{% url 'contact' %}">
+          {% csrf_token %}
+          {% for field in form %}
+            <div>
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-block">Send message</button>
+        </form>
+      </div>
 
     {% elif section == 'contact_success' %}
-      <section class="success-box">
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
         <h2>Message sent</h2>
-        <p class="muted">Thanks — your message was saved.</p>
-        <a class="cta" href="{% url 'home' %}">Back home</a>
-        <a class="cta secondary" href="{% url 'contact' %}">Send another</a>
-      </section>
+        <p class="lead" style="margin: 0 auto 1.5rem;">Thanks — your message was saved successfully.</p>
+        <div class="actions" style="justify-content: center;">
+          <a class="btn btn-primary" href="{% url 'home' %}">Back home</a>
+          <a class="btn btn-ghost" href="{% url 'contact' %}">Send another</a>
+        </div>
+      </div>
 
     {% else %}
-      <section class="hero" id="home">
-        <h1>Hi, I'm Victor.</h1>
-        <p>Portfolio on Django. Contact form stores name, email, and message in the database.</p>
-        <a class="cta" href="{% url 'contact' %}">Get in touch</a>
-        <a class="cta secondary" href="{% url 'work' %}">See work</a>
-      </section>
+      <span class="eyebrow">Portfolio</span>
+      <h1>Building clean web apps, one project at a time.</h1>
+      <p class="lead">
+        Hi, I’m Victor — BSIT student working with Django, Laravel, Docker, and databases.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="{% url 'contact' %}">Get in touch</a>
+        <a class="btn btn-ghost" href="{% url 'work' %}">See work</a>
+      </div>
+
+      <div class="grid-2" style="margin-top: 3rem;">
+        <div class="card">
+          <span class="tag">Stack</span>
+          <h3>What I use</h3>
+          <p>Python · Django · PHP · Laravel · MySQL · Postgres · Docker · Git</p>
+        </div>
+        <div class="card">
+          <span class="tag">Focus</span>
+          <h3>What I’m learning</h3>
+          <p>Migrations, ERDs, forms to database, and clear UI for real users.</p>
+        </div>
+      </div>
     {% endif %}
   </main>
+
+  <footer>
+    © {% now "Y" %} Victor James M. Irinco · BSIT
+  </footer>
 </body>
 </html>
