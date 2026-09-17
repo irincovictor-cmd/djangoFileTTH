@@ -3,32 +3,31 @@ from .models import Contact
 
 
 class ContactForm(forms.ModelForm):
-    """
-    ModelForm for the Contact model.
-    Fields are defined on the model; this form handles validation + save().
-    """
+    """Portfolio / site contact form → saves to Contact table."""
 
     class Meta:
         model = Contact
-        fields = ["name", "email", "contact"]
+        fields = ["name", "email", "message"]
         widgets = {
             "name": forms.TextInput(
                 attrs={
                     "placeholder": "Your name",
                     "autocomplete": "name",
+                    "class": "form-control",
                 }
             ),
             "email": forms.EmailInput(
                 attrs={
                     "placeholder": "you@example.com",
                     "autocomplete": "email",
+                    "class": "form-control",
                 }
             ),
-            "contact": forms.TextInput(
+            "message": forms.Textarea(
                 attrs={
-                    "placeholder": "e.g. 09XX XXX XXXX",
-                    "inputmode": "tel",
-                    "autocomplete": "tel",
+                    "placeholder": "Your message",
+                    "rows": 5,
+                    "class": "form-control",
                 }
             ),
         }
