@@ -23,6 +23,10 @@ def work(request):
     return _portfolio(request, "work")
 
 
+def skills(request):
+    return _portfolio(request, "skills")
+
+
 def about(request):
     return _portfolio(request, "about")
 
@@ -38,7 +42,7 @@ def topic_detail(request, pk):
 
 
 def contact(request):
-    """Portfolio contact section — still saves name/email/message to DB."""
+    """Portfolio contact — name/email/message → DB."""
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
