@@ -4,49 +4,45 @@ from .forms import ContactForm
 
 
 def home(request):
-    """Home page with hero and CTA buttons."""
-    return render(request, 'home.html')
+    """Home — prefers portfolio template if present."""
+    return render(request, "portfolio.html")
+
+
+def portfolio(request):
+    """Explicit portfolio route (Laravel-style sections can live in one HTML)."""
+    return render(request, "portfolio.html")
 
 
 def topics(request):
-    """Topics list — loaded from the database."""
     all_topics = Topic.objects.all()
-    return render(request, 'topics.html', {
-        'topics': all_topics,
-    })
+    return render(request, "topics.html", {"topics": all_topics})
 
 
 def topic_detail(request, pk):
-    """Single topic page."""
     topic = get_object_or_404(Topic, pk=pk)
-    return render(request, 'topic_detail.html', {
-        'topic': topic,
-    })
+    return render(request, "topic_detail.html", {"topic": topic})
 
 
 def about(request):
-    """About us page."""
-    return render(request, 'about.html')
+    return render(request, "about.html")
 
 
 def contact(request):
     """
-    Contact page using ContactForm (ModelForm).
-    GET  → empty form
-    POST → validate, save to DB, redirect to success page
-    (Matches the course pattern: redirect("contact_success"))
+    Contact form: name, email, message.
+    POST → validate → save to DB → redirect success.
+    Manage rows in /admin/ → Contacts.
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()  # store in database (extra vs bare sample)
-            return redirect('contact_success')
+            form.save()
+            return redirect("contact_success")
     else:
         form = ContactForm()
 
-    return render(request, 'contact.html', {'form': form})
+    return render(request, "contact.html", {"form": form})
 
 
 def contact_success(request):
-    """Shown after a successful contact form submit."""
-    return render(request, 'contact_success.html')
+    return render(request, "contact_success.html")
