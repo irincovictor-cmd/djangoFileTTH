@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -19,12 +20,54 @@ class Topic(models.Model):
         return self.title
 
 
+class Profile(models.Model):
+    """
+    One profile per contact-page user (keyed by email).
+    Tracks how many times they used the contact form and their latest details.
+    Visible in Django Admin → Profiles.
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="profile",
+        help_text="Optional link if they also have a Django login",
+    )
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    contact_count = models.PositiveIntegerField(
+        default=0,
+        help_text="How many times this person submitted the contact form",
+    )
+    last_contact_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True, help_text="Admin notes about this person")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-last_contact_at", "-created_at"]
+        verbose_name = "Profile"
+        verbose_name_plural = "Profiles"
+
+    def __str__(self):
+        return f"{self.name} <{self.email}> ({self.contact_count} messages)"
+
+
 class Contact(models.Model):
     """
     Contact form submission: name, email, message.
-    Visible in Django Admin → Contacts.
+    Linked to Profile so Admin can see each user's contact history.
     """
 
+    profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name="contacts",
+        null=True,
+        blank=True,
+    )
     name = models.CharField(max_length=100)
     email = models.EmailField()
     message = models.TextField()
