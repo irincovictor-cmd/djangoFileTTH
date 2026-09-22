@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Topic
+from django.utils import timezone
+from .models import Topic, Profile
 from .forms import ContactForm
 
 
@@ -42,11 +43,38 @@ def topic_detail(request, pk):
 
 
 def contact(request):
-    """Portfolio contact — name/email/message → DB."""
+    """
+    Portfolio contact — name/email/message → Contact + Profile.
+    Same email = same Profile; contact_count increases each submit.
+    """
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"].strip().lower()
+            message = form.cleaned_data["message"]
+
+            profile, _created = Profile.objects.get_or_create(
+                email=email,
+                defaults={"name": name},
+            )
+            # Keep name fresh if they type a new one
+            if profile.name != name:
+                profile.name = name
+
+            # Link Django user if logged in
+            if request.user.is_authenticated and profile.user_id is None:
+                profile.user = request.user
+
+            profile.contact_count = (profile.contact_count or 0) + 1
+            profile.last_contact_at = timezone.now()
+            profile.save()
+
+            contact_obj = form.save(commit=False)
+            contact_obj.email = email
+            contact_obj.profile = profile
+            contact_obj.save()
+
             return redirect("contact_success")
     else:
         form = ContactForm()
