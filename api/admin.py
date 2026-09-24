@@ -9,13 +9,13 @@ class TopicAdmin(admin.ModelAdmin):
 
 
 class ContactInline(admin.TabularInline):
-    """Show all contact-form uses under a Profile."""
+    """Message history under a Profile (no separate Contacts admin page)."""
 
     model = Contact
     extra = 0
     readonly_fields = ("name", "email", "message", "created_at")
     can_delete = True
-    show_change_link = True
+    show_change_link = False
 
 
 @admin.register(Profile)
@@ -23,33 +23,46 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "email",
+        "message_preview",
         "contact_count",
         "last_contact_at",
         "user",
         "created_at",
     )
-    search_fields = ("name", "email", "notes")
+    search_fields = ("name", "email", "notes", "last_message")
     list_filter = ("last_contact_at",)
-    readonly_fields = ("contact_count", "last_contact_at", "created_at", "updated_at")
+    readonly_fields = (
+        "last_message",
+        "contact_count",
+        "last_contact_at",
+        "created_at",
+        "updated_at",
+    )
     inlines = [ContactInline]
     fieldsets = (
         (None, {"fields": ("name", "email", "user", "notes")}),
         (
-            "Contact page usage",
-            {"fields": ("contact_count", "last_contact_at", "created_at", "updated_at")},
+            "Contact form data",
+            {
+                "fields": (
+                    "last_message",
+                    "contact_count",
+                    "last_contact_at",
+                    "created_at",
+                    "updated_at",
+                ),
+                "description": (
+                    "Filled automatically when someone uses the site contact form. "
+                    "Full message history is below."
+                ),
+            },
         ),
     )
 
-
-@admin.register(Contact)
-class ContactAdmin(admin.ModelAdmin):
-    list_display = ("name", "email", "profile", "message_preview", "created_at")
-    search_fields = ("name", "email", "message")
-    list_filter = ("created_at",)
-    readonly_fields = ("created_at",)
-    autocomplete_fields = ("profile",)
-
-    @admin.display(description="Message")
+    @admin.display(description="Latest message")
     def message_preview(self, obj):
-        text = obj.message or ""
-        return text[:60] + ("…" if len(text) > 60 else "")
+        text = obj.last_message or ""
+        return text[:60] + ("…" if len(text) > 60 else "") or "—"
+
+
+# Contact is NOT registered here on purpose — use Profiles only.

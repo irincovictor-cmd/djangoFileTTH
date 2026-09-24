@@ -22,9 +22,9 @@ class Topic(models.Model):
 
 class Profile(models.Model):
     """
-    One profile per contact-page user (keyed by email).
-    Tracks how many times they used the contact form and their latest details.
-    Visible in Django Admin → Profiles.
+    One profile per contact-page person (keyed by email).
+    All contact-form data is collected here for Django Admin → Profiles.
+    Optional message history is stored as related Contact rows (inline only).
     """
 
     user = models.OneToOneField(
@@ -37,6 +37,10 @@ class Profile(models.Model):
     )
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    last_message = models.TextField(
+        blank=True,
+        help_text="Most recent message from the contact form",
+    )
     contact_count = models.PositiveIntegerField(
         default=0,
         help_text="How many times this person submitted the contact form",
@@ -57,8 +61,8 @@ class Profile(models.Model):
 
 class Contact(models.Model):
     """
-    Contact form submission: name, email, message.
-    Linked to Profile so Admin can see each user's contact history.
+    Individual contact-form submission (message history).
+    Not shown as its own admin page — only as an inline under Profile.
     """
 
     profile = models.ForeignKey(

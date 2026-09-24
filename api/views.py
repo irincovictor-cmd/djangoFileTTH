@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from .models import Topic, Profile
+from .models import Topic, Profile, Contact
 from .forms import ContactForm
 
 
@@ -44,8 +44,9 @@ def topic_detail(request, pk):
 
 def contact(request):
     """
-    Portfolio contact — name/email/message → Contact + Profile.
-    Same email = same Profile; contact_count increases each submit.
+    Portfolio contact → Profile (admin source of truth).
+    Same email = same Profile; last_message + count updated each submit.
+    Message history is also stored as Contact rows (inline under Profile only).
     """
     if request.method == "POST":
         form = ContactForm(request.POST)
@@ -56,14 +57,12 @@ def contact(request):
 
             profile, _created = Profile.objects.get_or_create(
                 email=email,
-                defaults={"name": name},
+                defaults={"name": name, "last_message": message},
             )
-            # Keep name fresh if they type a new one
             if profile.name != name:
                 profile.name = name
 
-            # Link Django user only if this profile has no user yet AND
-            # this user is not already linked to another Profile (OneToOne).
+            # Link Django user only if free (OneToOne)
             if (
                 request.user.is_authenticated
                 and profile.user_id is None
@@ -71,14 +70,18 @@ def contact(request):
             ):
                 profile.user = request.user
 
+            profile.last_message = message
             profile.contact_count = (profile.contact_count or 0) + 1
             profile.last_contact_at = timezone.now()
             profile.save()
 
-            contact_obj = form.save(commit=False)
-            contact_obj.email = email
-            contact_obj.profile = profile
-            contact_obj.save()
+            # History row (visible only as Profile inline in admin)
+            Contact.objects.create(
+                profile=profile,
+                name=name,
+                email=email,
+                message=message,
+            )
 
             return redirect("contact_success")
     else:
