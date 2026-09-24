@@ -62,8 +62,13 @@ def contact(request):
             if profile.name != name:
                 profile.name = name
 
-            # Link Django user if logged in
-            if request.user.is_authenticated and profile.user_id is None:
+            # Link Django user only if this profile has no user yet AND
+            # this user is not already linked to another Profile (OneToOne).
+            if (
+                request.user.is_authenticated
+                and profile.user_id is None
+                and not Profile.objects.filter(user=request.user).exists()
+            ):
                 profile.user = request.user
 
             profile.contact_count = (profile.contact_count or 0) + 1
