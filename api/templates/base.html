@@ -71,8 +71,6 @@
             }
         }
 
-        /* ---------- Navbar ---------- */
-
         .navbar {
             background: var(--ink);
             border-bottom: 3px solid var(--margin);
@@ -145,8 +143,6 @@
             color: #fff;
         }
 
-        /* ---------- Buttons ---------- */
-
         .btn {
             display: inline-block;
             padding: 0.7rem 1.4rem;
@@ -181,8 +177,6 @@
             border-color: var(--ink);
             background: rgba(34, 40, 58, 0.04);
         }
-
-        /* ---------- Page frame: ruled notebook page ---------- */
 
         main {
             flex: 1;
@@ -242,7 +236,6 @@
             max-width: 60ch;
         }
 
-        /* Topics page bottom CTA — text + button stacked and centered */
         .topics-cta {
             margin-top: 2.75rem;
             display: flex;
@@ -267,8 +260,6 @@
             color: var(--margin);
             margin-bottom: 0.6rem;
         }
-
-        /* ---------- Hero (home) ---------- */
 
         .hero {
             display: grid;
@@ -350,8 +341,6 @@
             font-family: 'IBM Plex Mono', monospace;
         }
 
-        /* ---------- Topic grid / index cards ---------- */
-
         .grid {
             display: grid;
             gap: 1.4rem;
@@ -410,8 +399,6 @@
             font-size: 0.95rem;
         }
 
-        /* ---------- Content box (About, detail pages) ---------- */
-
         .content-box {
             background: var(--paper-card);
             color: var(--ink);
@@ -438,8 +425,6 @@
             color: var(--ink);
             font-weight: 600;
         }
-
-        /* ---------- Contact worksheet ---------- */
 
         .glass-card {
             width: 100%;
@@ -511,8 +496,6 @@
             justify-content: center;
         }
 
-        /* ---------- Footer ---------- */
-
         footer {
             border-top: 3px solid var(--margin);
             background: var(--ink);
@@ -521,6 +504,11 @@
             color: #9BA2B0;
             font-size: 0.88rem;
         }
+
+        footer a {
+            color: #C8CDD8;
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -528,25 +516,29 @@
 
     <header class="navbar">
         <div class="nav-inner">
-            <a href="/" class="logo">LearnHub</a>
+            <a href="{% url 'home' %}" class="logo">LearnHub</a>
             <ul class="nav-links">
                 <li>
-                    <a href="/" class="{% if request.path == '/' or request.path == '/home/' %}active{% endif %}">
+                    <a href="{% url 'home' %}"
+                        class="{% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'home_page' %}active{% endif %}">
                         Home
                     </a>
                 </li>
                 <li>
-                    <a href="/topics/" class="{% if '/topics' in request.path %}active{% endif %}">
+                    <a href="{% url 'topics' %}"
+                        class="{% if request.resolver_match.url_name == 'topics' or request.resolver_match.url_name == 'topic_detail' %}active{% endif %}">
                         Topics
                     </a>
                 </li>
                 <li>
-                    <a href="/about/" class="{% if '/about' in request.path %}active{% endif %}">
+                    <a href="{% url 'about' %}"
+                        class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">
                         About Us
                     </a>
                 </li>
                 <li>
-                    <a href="/contact/" class="{% if '/contact' in request.path %}active{% endif %}">
+                    <a href="{% url 'contact' %}"
+                        class="{% if request.resolver_match.url_name == 'contact' or request.resolver_match.url_name == 'contact_success' %}active{% endif %}">
                         Contact
                     </a>
                 </li>
@@ -559,7 +551,10 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 LearnHub. Built with Django for learning.</p>
+        <p>
+            &copy; 2026 LearnHub. Built with Django for learning.
+            · <a href="{% url 'portfolio' %}">Portfolio</a>
+        </p>
     </footer>
 
 </body>
