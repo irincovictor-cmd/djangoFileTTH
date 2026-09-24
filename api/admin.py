@@ -9,13 +9,13 @@ class TopicAdmin(admin.ModelAdmin):
 
 
 class ContactInline(admin.TabularInline):
-    """Message history under a Profile (no separate Contacts admin page)."""
+    """Message history under a Profile."""
 
     model = Contact
     extra = 0
     readonly_fields = ("name", "email", "message", "created_at")
     can_delete = True
-    show_change_link = False
+    show_change_link = True
 
 
 @admin.register(Profile)
@@ -52,9 +52,8 @@ class ProfileAdmin(admin.ModelAdmin):
                     "updated_at",
                 ),
                 "description": (
-                    "Profiles are unique by email + name. Same email with a "
-                    "different name creates a new Profile so you can backtrack. "
-                    "Full message history is below."
+                    "Profiles are unique by email + name. Full message history "
+                    "is below and also listed under Contacts."
                 ),
             },
         ),
@@ -64,3 +63,20 @@ class ProfileAdmin(admin.ModelAdmin):
     def message_preview(self, obj):
         text = obj.last_message or ""
         return text[:60] + ("…" if len(text) > 60 else "") or "—"
+
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    """Every LearnHub contact-form submission (one row per message)."""
+
+    list_display = ("name", "email", "profile", "message_preview", "created_at")
+    search_fields = ("name", "email", "message")
+    list_filter = ("created_at",)
+    readonly_fields = ("created_at",)
+    autocomplete_fields = ("profile",)
+    date_hierarchy = "created_at"
+
+    @admin.display(description="Message")
+    def message_preview(self, obj):
+        text = obj.message or ""
+        return text[:60] + ("…" if len(text) > 60 else "")

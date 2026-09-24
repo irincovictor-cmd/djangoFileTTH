@@ -4,32 +4,27 @@ from .models import Topic, Profile, Contact
 from .forms import ContactForm
 
 
-def _portfolio(request, section="home", extra=None):
-    """Portfolio pages share one template + nav."""
-    ctx = {"section": section}
-    if extra:
-        ctx.update(extra)
-    return render(request, "portfolio.html", ctx)
-
-
 def home(request):
-    return _portfolio(request, "home")
+    """LearnHub home."""
+    return render(request, "home.html")
 
 
 def portfolio(request):
-    return _portfolio(request, "home")
+    """Alias for home (legacy URL)."""
+    return render(request, "home.html")
 
 
 def work(request):
-    return _portfolio(request, "work")
+    return render(request, "home.html")
 
 
 def skills(request):
-    return _portfolio(request, "skills")
+    return render(request, "home.html")
 
 
 def about(request):
-    return _portfolio(request, "about")
+    """LearnHub about page."""
+    return render(request, "about.html")
 
 
 def topics(request):
@@ -44,10 +39,9 @@ def topic_detail(request, pk):
 
 def contact(request):
     """
-    Contact form → Profile keyed by (email + name).
-    - Same email + same name → update that Profile (count, last_message).
-    - Same email + different name → new Profile row (backtrack by name).
-    Message history still stored under each Profile as Contact inlines.
+    LearnHub contact form → Profile + Contact rows.
+    Same email + same name updates Profile; different name = new Profile.
+    Each submit also creates a Contact row (admin list + Profile inline).
     """
     if request.method == "POST":
         form = ContactForm(request.POST)
@@ -62,7 +56,6 @@ def contact(request):
                 defaults={"last_message": message},
             )
 
-            # Link Django user only if free (OneToOne)
             if (
                 request.user.is_authenticated
                 and profile.user_id is None
@@ -86,8 +79,9 @@ def contact(request):
     else:
         form = ContactForm()
 
-    return _portfolio(request, "contact", {"form": form})
+    return render(request, "contact.html", {"form": form})
 
 
 def contact_success(request):
-    return _portfolio(request, "contact_success")
+    """LearnHub success page after contact submit."""
+    return render(request, "contact_success.html")
