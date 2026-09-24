@@ -44,23 +44,23 @@ def topic_detail(request, pk):
 
 def contact(request):
     """
-    Portfolio contact → Profile (admin source of truth).
-    Same email = same Profile; last_message + count updated each submit.
-    Message history is also stored as Contact rows (inline under Profile only).
+    Contact form → Profile keyed by (email + name).
+    - Same email + same name → update that Profile (count, last_message).
+    - Same email + different name → new Profile row (backtrack by name).
+    Message history still stored under each Profile as Contact inlines.
     """
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data["name"]
+            name = form.cleaned_data["name"].strip()
             email = form.cleaned_data["email"].strip().lower()
             message = form.cleaned_data["message"]
 
             profile, _created = Profile.objects.get_or_create(
                 email=email,
-                defaults={"name": name, "last_message": message},
+                name=name,
+                defaults={"last_message": message},
             )
-            if profile.name != name:
-                profile.name = name
 
             # Link Django user only if free (OneToOne)
             if (
@@ -75,7 +75,6 @@ def contact(request):
             profile.last_contact_at = timezone.now()
             profile.save()
 
-            # History row (visible only as Profile inline in admin)
             Contact.objects.create(
                 profile=profile,
                 name=name,

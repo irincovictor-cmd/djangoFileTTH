@@ -22,9 +22,10 @@ class Topic(models.Model):
 
 class Profile(models.Model):
     """
-    One profile per contact-page person (keyed by email).
-    All contact-form data is collected here for Django Admin → Profiles.
-    Optional message history is stored as related Contact rows (inline only).
+    Contact identity keyed by (email + name).
+    Same email with a different name → separate Profile so you can backtrack
+    who submitted under which name. Same email + same name → one Profile,
+    updated on each submit (count + last message).
     """
 
     user = models.OneToOneField(
@@ -36,14 +37,16 @@ class Profile(models.Model):
         help_text="Optional link if they also have a Django login",
     )
     name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(
+        help_text="Not unique alone — same email + different name = different profiles",
+    )
     last_message = models.TextField(
         blank=True,
         help_text="Most recent message from the contact form",
     )
     contact_count = models.PositiveIntegerField(
         default=0,
-        help_text="How many times this person submitted the contact form",
+        help_text="How many times this name+email submitted the contact form",
     )
     last_contact_at = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True, help_text="Admin notes about this person")
@@ -54,6 +57,12 @@ class Profile(models.Model):
         ordering = ["-last_contact_at", "-created_at"]
         verbose_name = "Profile"
         verbose_name_plural = "Profiles"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["email", "name"],
+                name="unique_profile_email_name",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} <{self.email}> ({self.contact_count} messages)"

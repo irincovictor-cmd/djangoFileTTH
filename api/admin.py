@@ -30,7 +30,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "created_at",
     )
     search_fields = ("name", "email", "notes", "last_message")
-    list_filter = ("last_contact_at",)
+    list_filter = ("email", "last_contact_at")
     readonly_fields = (
         "last_message",
         "contact_count",
@@ -52,7 +52,8 @@ class ProfileAdmin(admin.ModelAdmin):
                     "updated_at",
                 ),
                 "description": (
-                    "Filled automatically when someone uses the site contact form. "
+                    "Profiles are unique by email + name. Same email with a "
+                    "different name creates a new Profile so you can backtrack. "
                     "Full message history is below."
                 ),
             },
@@ -63,6 +64,3 @@ class ProfileAdmin(admin.ModelAdmin):
     def message_preview(self, obj):
         text = obj.last_message or ""
         return text[:60] + ("…" if len(text) > 60 else "") or "—"
-
-
-# Contact is NOT registered here on purpose — use Profiles only.
