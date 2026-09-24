@@ -22,10 +22,8 @@ class Topic(models.Model):
 
 class Profile(models.Model):
     """
-    Contact identity keyed by (email + name).
-    Same email with a different name → separate Profile so you can backtrack
-    who submitted under which name. Same email + same name → one Profile,
-    updated on each submit (count + last message).
+    Person who used a contact form (keyed by email + name).
+    Activity stats only — full messages are Contact rows (Admin → Contacts).
     """
 
     user = models.OneToOneField(
@@ -42,11 +40,11 @@ class Profile(models.Model):
     )
     last_message = models.TextField(
         blank=True,
-        help_text="Most recent message from the contact form",
+        help_text="Snapshot of the latest message (read full history in Contacts)",
     )
     contact_count = models.PositiveIntegerField(
         default=0,
-        help_text="How many times this name+email submitted the contact form",
+        help_text="How many times this name+email submitted a contact form",
     )
     last_contact_at = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True, help_text="Admin notes about this person")
@@ -65,13 +63,13 @@ class Profile(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.name} <{self.email}> ({self.contact_count} messages)"
+        return f"{self.name} <{self.email}>"
 
 
 class Contact(models.Model):
     """
-    Individual contact-form submission (message history).
-    Not shown as its own admin page — only as an inline under Profile.
+    One contact-form submission = one message.
+    Admin → Contacts is the inbox. Profile is the person, not the message list.
     """
 
     profile = models.ForeignKey(
@@ -80,6 +78,7 @@ class Contact(models.Model):
         related_name="contacts",
         null=True,
         blank=True,
+        help_text="Person (email + name) this message belongs to",
     )
     name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -88,6 +87,9 @@ class Contact(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "Contact message"
+        verbose_name_plural = "Contact messages"
 
     def __str__(self):
-        return f"{self.name} ({self.email})"
+        preview = (self.message or "")[:40]
+        return f"{self.name}: {preview}"

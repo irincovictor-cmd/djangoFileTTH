@@ -8,75 +8,108 @@ class TopicAdmin(admin.ModelAdmin):
     search_fields = ("title", "tag", "summary")
 
 
-class ContactInline(admin.TabularInline):
-    """Message history under a Profile."""
-
-    model = Contact
-    extra = 0
-    readonly_fields = ("name", "email", "message", "created_at")
-    can_delete = True
-    show_change_link = True
-
-
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
+    """
+    One row per person (email + name).
+    Does NOT list full messages here — open Contacts for the inbox.
+    """
+
     list_display = (
         "name",
         "email",
-        "message_preview",
         "contact_count",
         "last_contact_at",
         "user",
         "created_at",
     )
-    search_fields = ("name", "email", "notes", "last_message")
-    list_filter = ("email", "last_contact_at")
+    search_fields = ("name", "email", "notes")
+    list_filter = ("last_contact_at",)
     readonly_fields = (
-        "last_message",
         "contact_count",
         "last_contact_at",
+        "last_message",
         "created_at",
         "updated_at",
     )
-    inlines = [ContactInline]
+    # No ContactInline — messages live only under Contacts admin
     fieldsets = (
-        (None, {"fields": ("name", "email", "user", "notes")}),
         (
-            "Contact form data",
+            "Person",
+            {
+                "fields": ("name", "email", "user", "notes"),
+                "description": (
+                    "Identity only. Each unique email + name is one Profile. "
+                    "To read messages, use Admin → Contacts."
+                ),
+            },
+        ),
+        (
+            "Activity (auto-updated)",
             {
                 "fields": (
-                    "last_message",
                     "contact_count",
                     "last_contact_at",
+                    "last_message",
                     "created_at",
                     "updated_at",
-                ),
-                "description": (
-                    "Profiles are unique by email + name. Full message history "
-                    "is below and also listed under Contacts."
                 ),
             },
         ),
     )
 
-    @admin.display(description="Latest message")
-    def message_preview(self, obj):
-        text = obj.last_message or ""
-        return text[:60] + ("…" if len(text) > 60 else "") or "—"
-
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    """Every LearnHub contact-form submission (one row per message)."""
+    """
+    Message inbox — one row per form submission.
+    This is where you read what people wrote.
+    """
 
-    list_display = ("name", "email", "profile", "message_preview", "created_at")
+    list_display = (
+        "created_at",
+        "name",
+        "email",
+        "message_preview",
+        "profile_link",
+    )
+    list_display_links = ("created_at", "message_preview")
     search_fields = ("name", "email", "message")
     list_filter = ("created_at",)
-    readonly_fields = ("created_at",)
-    autocomplete_fields = ("profile",)
+    readonly_fields = ("name", "email", "message", "profile", "created_at")
     date_hierarchy = "created_at"
+    ordering = ("-created_at",)
+
+    fieldsets = (
+        (
+            "Message",
+            {
+                "fields": ("name", "email", "message", "created_at"),
+                "description": "Single contact-form submission (LearnHub or Portfolio).",
+            },
+        ),
+        (
+            "Linked profile",
+            {
+                "fields": ("profile",),
+                "description": "Person record (email + name). Edit profile notes there if needed.",
+            },
+        ),
+    )
 
     @admin.display(description="Message")
     def message_preview(self, obj):
-        text = obj.message or ""
-        return text[:60] + ("…" if len(text) > 60 else "")
+        text = (obj.message or "").strip()
+        if not text:
+            return "—"
+        return text[:80] + ("…" if len(text) > 80 else "")
+
+    @admin.display(description="Profile")
+    def profile_link(self, obj):
+        if not obj.profile_id:
+            return "—"
+        return str(obj.profile)
+
+    def has_add_permission(self, request):
+        # Messages come from the public forms only
+        return False
