@@ -5,14 +5,10 @@ from .forms import ContactForm
 
 
 # ---------------------------------------------------------------------------
-# Shared contact save (used by LearnHub + Portfolio forms)
+# Shared contact save (LearnHub + Portfolio forms → same DB)
 # ---------------------------------------------------------------------------
 
 def _save_contact_submission(request, form):
-    """
-    Persist a valid ContactForm: Profile (email+name) + Contact history row.
-    Returns True on success.
-    """
     name = form.cleaned_data["name"].strip()
     email = form.cleaned_data["email"].strip().lower()
     message = form.cleaned_data["message"]
@@ -45,37 +41,35 @@ def _save_contact_submission(request, form):
 
 
 def _portfolio(request, section="home", extra=None):
-    """Render dark portfolio shell with a section flag."""
     ctx = {"section": section}
     if extra:
         ctx.update(extra)
-    return render(request, "portfolio.html", ctx)
+    return render(request, "portfolio/shell.html", ctx)
 
 
 # ---------------------------------------------------------------------------
-# LearnHub
+# LearnHub  →  templates/learnhub/
 # ---------------------------------------------------------------------------
 
 def home(request):
-    return render(request, "home.html")
+    return render(request, "learnhub/home.html")
 
 
 def about(request):
-    return render(request, "about.html")
+    return render(request, "learnhub/about.html")
 
 
 def topics(request):
     all_topics = Topic.objects.all()
-    return render(request, "topics.html", {"topics": all_topics})
+    return render(request, "learnhub/topics.html", {"topics": all_topics})
 
 
 def topic_detail(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
-    return render(request, "topic_detail.html", {"topic": topic})
+    return render(request, "learnhub/topic_detail.html", {"topic": topic})
 
 
 def contact(request):
-    """LearnHub contact — notebook UI, saves to same DB as portfolio."""
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -83,15 +77,15 @@ def contact(request):
             return redirect("contact_success")
     else:
         form = ContactForm()
-    return render(request, "contact.html", {"form": form})
+    return render(request, "learnhub/contact.html", {"form": form})
 
 
 def contact_success(request):
-    return render(request, "contact_success.html")
+    return render(request, "learnhub/contact_success.html")
 
 
 # ---------------------------------------------------------------------------
-# Portfolio (separate URLs + template — no clash with LearnHub)
+# Portfolio  →  templates/portfolio/
 # ---------------------------------------------------------------------------
 
 def portfolio_home(request):
@@ -111,7 +105,6 @@ def portfolio_about(request):
 
 
 def portfolio_contact(request):
-    """Portfolio contact — dark UI; same Profile/Contact save as LearnHub."""
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():

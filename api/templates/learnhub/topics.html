@@ -1,0 +1,30 @@
+{% extends 'learnhub/base.html' %}
+
+{% block title %}Topics{% endblock %}
+
+{% block content %}
+<div class="page">
+    <h1 class="page-title">Topics</h1>
+    <p class="page-sub">Browse lessons loaded from the database — click one to read more.</p>
+
+    {% if topics %}
+    <div class="grid">
+        {% for topic in topics %}
+        <a href="{% url 'topic_detail' topic.id %}" class="card">
+            <span class="punch"></span>
+            <span class="tag">{{ topic.tag }}</span>
+            <h3>{{ topic.title }}</h3>
+            <p>{{ topic.summary }}</p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="page-sub">No topics yet. Run migrations or add some in the admin.</p>
+    {% endif %}
+
+    <div class="topics-cta">
+        <p class="topics-cta-text">Ready to practice?</p>
+        <a href="{% url 'contact' %}" class="btn btn-primary">Ask a question</a>
+    </div>
+</div>
+{% endblock %}
