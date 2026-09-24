@@ -352,7 +352,6 @@
       margin-bottom: 0.2rem;
     }
 
-    /* Contact page — centered */
     .contact-section {
       display: flex;
       flex-direction: column;
@@ -449,14 +448,14 @@
   <header>
     <nav>
       <div class="nav-mark">
-        <a href="{% url 'home' %}">Victor James M. Irinco.</a>
+        <a href="{% url 'portfolio' %}">Victor James M. Irinco.</a>
       </div>
       <ul class="nav-links">
-        <li><a href="{% url 'home' %}" class="{% if section == 'home' %}active{% endif %}">Home</a></li>
-        <li><a href="{% url 'work' %}" class="{% if section == 'work' %}active{% endif %}">Work</a></li>
-        <li><a href="{% url 'skills' %}" class="{% if section == 'skills' %}active{% endif %}">Skills</a></li>
-        <li><a href="{% url 'about' %}" class="{% if section == 'about' %}active{% endif %}">About</a></li>
-        <li><a href="{% url 'contact' %}" class="{% if section == 'contact' or section == 'contact_success' %}active{% endif %}">Contact</a></li>
+        <li><a href="{% url 'portfolio' %}" class="{% if section == 'home' %}active{% endif %}">Home</a></li>
+        <li><a href="{% url 'portfolio_work' %}" class="{% if section == 'work' %}active{% endif %}">Work</a></li>
+        <li><a href="{% url 'portfolio_skills' %}" class="{% if section == 'skills' %}active{% endif %}">Skills</a></li>
+        <li><a href="{% url 'portfolio_about' %}" class="{% if section == 'about' %}active{% endif %}">About</a></li>
+        <li><a href="{% url 'portfolio_contact' %}" class="{% if section == 'contact' or section == 'contact_success' %}active{% endif %}">Contact</a></li>
       </ul>
     </nav>
   </header>
@@ -545,8 +544,8 @@
       </div>
 
       <div class="actions">
-        <a class="btn btn-primary" href="{% url 'work' %}">See projects</a>
-        <a class="btn btn-ghost" href="{% url 'contact' %}">Contact</a>
+        <a class="btn btn-primary" href="{% url 'portfolio_work' %}">See projects</a>
+        <a class="btn btn-ghost" href="{% url 'portfolio_contact' %}">Contact</a>
       </div>
 
     {% elif section == 'about' %}
@@ -559,8 +558,8 @@
             and shipping small apps with Laravel and Django.
           </p>
           <div class="actions">
-            <a class="btn btn-primary" href="{% url 'contact' %}">Contact me</a>
-            <a class="btn btn-ghost" href="{% url 'skills' %}">Skills</a>
+            <a class="btn btn-primary" href="{% url 'portfolio_contact' %}">Contact me</a>
+            <a class="btn btn-ghost" href="{% url 'portfolio_skills' %}">Skills</a>
           </div>
         </div>
         <ul class="stat-list">
@@ -575,10 +574,10 @@
       <div class="contact-section">
         <span class="eyebrow">Contact</span>
         <h2>Let’s talk</h2>
-        <p class="lead">Send a message. It is stored in the database and visible under Admin → Contacts.</p>
+        <p class="lead">Send a message. Stored in the database — Admin → Contacts / Profiles.</p>
 
         <div class="form-card">
-          <form method="post" action="{% url 'contact' %}">
+          <form method="post" action="{% url 'portfolio_contact' %}">
             {% csrf_token %}
             {% for field in form %}
               <div>
@@ -600,8 +599,8 @@
         <h2>Message sent</h2>
         <p class="lead" style="margin: 0 auto 1.5rem;">Thanks — your message was saved successfully.</p>
         <div class="actions" style="justify-content: center;">
-          <a class="btn btn-primary" href="{% url 'home' %}">Back home</a>
-          <a class="btn btn-ghost" href="{% url 'contact' %}">Send another</a>
+          <a class="btn btn-primary" href="{% url 'portfolio' %}">Back home</a>
+          <a class="btn btn-ghost" href="{% url 'portfolio_contact' %}">Send another</a>
         </div>
       </div>
 
@@ -612,9 +611,9 @@
         Hi, I’m Victor — BSIT student working with Django, Laravel, Docker, and databases.
       </p>
       <div class="actions">
-        <a class="btn btn-primary" href="{% url 'contact' %}">Get in touch</a>
-        <a class="btn btn-ghost" href="{% url 'skills' %}">Skills</a>
-        <a class="btn btn-ghost" href="{% url 'work' %}">See work</a>
+        <a class="btn btn-primary" href="{% url 'portfolio_contact' %}">Get in touch</a>
+        <a class="btn btn-ghost" href="{% url 'portfolio_skills' %}">Skills</a>
+        <a class="btn btn-ghost" href="{% url 'portfolio_work' %}">See work</a>
       </div>
 
       <div class="grid-2" style="margin-top: 3rem;">
@@ -634,6 +633,7 @@
 
   <footer>
     © {% now "Y" %} Victor James M. Irinco · BSIT
+    · <a href="{% url 'home' %}" style="color: var(--muted);">LearnHub</a>
   </footer>
 </body>
 </html>
