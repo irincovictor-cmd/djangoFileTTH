@@ -67,6 +67,29 @@ class TopicManageForm(forms.Form):
             }
         ),
     )
+    resource_url = forms.URLField(
+        label="Learn more link (optional)",
+        required=False,
+        widget=forms.URLInput(
+            attrs={
+                "placeholder": "https://docs.djangoproject.com/...",
+                "class": "form-control",
+            }
+        ),
+        help_text="External URL for students who want to study more on this topic.",
+    )
+    resource_label = forms.CharField(
+        max_length=100,
+        label="Link label (optional)",
+        required=False,
+        initial="Learn more",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Learn more",
+                "class": "form-control",
+            }
+        ),
+    )
     remove_topic = forms.ModelChoiceField(
         queryset=Topic.objects.all(),
         required=False,

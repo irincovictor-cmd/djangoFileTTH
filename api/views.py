@@ -103,6 +103,8 @@ def topic_manage(request):
         tag = form.cleaned_data["tag"].strip()
         summary = form.cleaned_data["summary"].strip()
         body = (form.cleaned_data.get("body") or "").strip() or summary
+        resource_url = form.cleaned_data.get("resource_url") or ""
+        resource_label = (form.cleaned_data.get("resource_label") or "").strip() or "Learn more"
         remove = form.cleaned_data.get("remove_topic")
 
         Topic.objects.create(
@@ -110,6 +112,8 @@ def topic_manage(request):
             tag=tag,
             summary=summary,
             body=body,
+            resource_url=resource_url,
+            resource_label=resource_label,
         )
 
         if remove:
@@ -122,7 +126,7 @@ def topic_manage(request):
         else:
             messages.success(request, f'Added topic "{title}".')
     else:
-        messages.error(request, "Could not save topic. Check the form fields.")
+        messages.error(request, "Could not save topic. Check the form fields (link must be a valid URL if provided).")
 
     return redirect("topics")
 
