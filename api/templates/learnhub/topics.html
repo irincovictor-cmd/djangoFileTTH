@@ -55,7 +55,7 @@
             <button type="button" class="modal-close" id="close-topic-modal" aria-label="Close">×</button>
         </div>
 
-        <form method="post" action="{% url 'topic_manage' %}" class="modal-form">
+        <form method="post" action="{% url 'topic_manage' %}" class="modal-form" id="topic-manage-form">
             {% csrf_token %}
 
             <div class="form-group">
@@ -87,13 +87,15 @@
             <div class="form-group">
                 <label for="id_remove_topic">Remove old topic</label>
                 {{ topic_form.remove_topic }}
-                <p class="field-hint">When you add a new topic, pick an old one to remove (or leave none).</p>
+                <p class="field-hint">Pick a topic here to delete it, or to replace it when adding a new one.</p>
             </div>
 
             <div class="modal-actions">
                 <button type="submit" name="action" value="add" class="btn btn-primary">Add topic</button>
+                {# formnovalidate: skip required name/category/description when only deleting #}
                 <button type="submit" name="action" value="delete" class="btn btn-ghost"
-                        onclick="return confirm('Delete the selected topic only?');">Delete selected</button>
+                        formnovalidate
+                        onclick="return confirmDeleteOnly();">Delete selected</button>
             </div>
         </form>
     </div>
@@ -110,7 +112,6 @@
     }
     .topics-header .page-title { margin-bottom: 0.35rem; }
 
-    /* Stronger Add topic button */
     .btn-add-topic {
         display: inline-flex;
         align-items: center;
@@ -276,5 +277,15 @@
         if (e.key === 'Escape' && !modal.hidden) closeModal();
     });
 })();
+
+function confirmDeleteOnly() {
+    var select = document.getElementById('id_remove_topic');
+    if (!select || !select.value) {
+        alert('Choose a topic in "Remove old topic" before deleting.');
+        return false;
+    }
+    var label = select.options[select.selectedIndex].text;
+    return confirm('Delete "' + label + '" only? You do not need to fill the other fields.');
+}
 </script>
 {% endblock %}
