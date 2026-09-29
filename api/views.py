@@ -87,13 +87,18 @@ def topic_manage(request):
     action = request.POST.get("action", "add")
 
     if action == "delete":
+        # Delete-only: do not require title/category/description
         pk = request.POST.get("remove_topic")
-        if pk:
-            topic = Topic.objects.filter(pk=pk).first()
-            if topic:
-                title = topic.title
-                topic.delete()
-                messages.success(request, f'Removed topic "{title}".')
+        if not pk:
+            messages.error(request, 'Choose a topic in "Remove old topic" before deleting.')
+            return redirect("topics")
+        topic = Topic.objects.filter(pk=pk).first()
+        if topic:
+            title = topic.title
+            topic.delete()
+            messages.success(request, f'Removed topic "{title}".')
+        else:
+            messages.error(request, "That topic was not found.")
         return redirect("topics")
 
     # action == add (default)
@@ -126,7 +131,10 @@ def topic_manage(request):
         else:
             messages.success(request, f'Added topic "{title}".')
     else:
-        messages.error(request, "Could not save topic. Check the form fields (link must be a valid URL if provided).")
+        messages.error(
+            request,
+            "Could not save topic. Check the form fields (link must be a valid URL if provided).",
+        )
 
     return redirect("topics")
 
