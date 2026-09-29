@@ -34,7 +34,7 @@ class ContactForm(forms.ModelForm):
 
 
 class TopicManageForm(forms.Form):
-    """Modal form: add a topic and optionally remove an existing one."""
+    """Modal form: add a topic and optionally move an existing one to recycle bin."""
 
     title = forms.CharField(
         max_length=200,
@@ -91,10 +91,15 @@ class TopicManageForm(forms.Form):
         ),
     )
     remove_topic = forms.ModelChoiceField(
-        queryset=Topic.objects.all(),
+        queryset=Topic.objects.active(),
         required=False,
-        label="Remove old topic",
-        empty_label="— None (just add) —",
-        help_text="Optional: delete this topic when adding the new one.",
+        label="Move to recycle bin",
+        empty_label="— None —",
+        help_text="Optional: soft-delete this topic (can restore later).",
         widget=forms.Select(attrs={"class": "form-control"}),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Fresh queryset each time (active topics only)
+        self.fields["remove_topic"].queryset = Topic.objects.active()

@@ -1,9 +1,33 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+
+
+class TopicQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(deleted_at__isnull=True)
+
+    def deleted(self):
+        return self.filter(deleted_at__isnull=False)
+
+
+class TopicManager(models.Manager):
+    def get_queryset(self):
+        return TopicQuerySet(self.model, using=self._db)
+
+    def active(self):
+        return self.get_queryset().active()
+
+    def deleted(self):
+        return self.get_queryset().deleted()
 
 
 class Topic(models.Model):
-    """Educational topic for LearnHub topics page."""
+    """Educational topic for LearnHub topics page.
+
+    Soft-delete: deleted_at set → recycle bin (still in this table).
+    Permanent delete removes the row entirely.
+    """
 
     title = models.CharField(max_length=200)
     tag = models.CharField(max_length=50, help_text="Category / short label, e.g. Django, Git")
@@ -12,12 +36,33 @@ class Topic(models.Model):
     resource_url = models.URLField(blank=True)
     resource_label = models.CharField(max_length=100, blank=True, default="Learn more")
     created_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When set, topic is in the recycle bin (not shown on /topics/).",
+    )
+
+    objects = TopicManager()
 
     class Meta:
         ordering = ["id"]
 
     def __str__(self):
+        if self.deleted_at:
+            return f"{self.title} (in recycle bin)"
         return self.title
+
+    @property
+    def is_deleted(self):
+        return self.deleted_at is not None
+
+    def soft_delete(self):
+        self.deleted_at = timezone.now()
+        self.save(update_fields=["deleted_at"])
+
+    def restore(self):
+        self.deleted_at = None
+        self.save(update_fields=["deleted_at"])
 
 
 class Profile(models.Model):

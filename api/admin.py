@@ -4,8 +4,25 @@ from .models import Topic, Contact, Profile
 
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
-    list_display = ("title", "tag", "resource_url", "created_at")
+    list_display = ("title", "tag", "resource_url", "created_at", "deleted_at", "in_recycle_bin")
+    list_filter = ("deleted_at", "tag")
     search_fields = ("title", "tag", "summary")
+    readonly_fields = ("created_at", "deleted_at")
+    actions = ("restore_topics", "soft_delete_topics")
+
+    @admin.display(boolean=True, description="In bin?")
+    def in_recycle_bin(self, obj):
+        return obj.is_deleted
+
+    @admin.action(description="Restore selected from recycle bin")
+    def restore_topics(self, request, queryset):
+        for t in queryset.deleted():
+            t.restore()
+
+    @admin.action(description="Move selected to recycle bin")
+    def soft_delete_topics(self, request, queryset):
+        for t in queryset.active():
+            t.soft_delete()
 
 
 @admin.register(Profile)
@@ -84,7 +101,7 @@ class ContactAdmin(admin.ModelAdmin):
     readonly_fields = ("name", "email", "message", "profile", "created_at")
     date_hierarchy = "created_at"
     ordering = ("-created_at",)
-    exclude = ("profile",)  # hide linked profile — LearnHub no longer sets it
+    exclude = ("profile",)
 
     fieldsets = (
         (

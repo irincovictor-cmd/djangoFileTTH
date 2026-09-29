@@ -70,38 +70,67 @@ def about(request):
 
 
 def topics(request):
-    all_topics = Topic.objects.all()
+    all_topics = Topic.objects.active()
+    deleted_topics = Topic.objects.deleted().order_by("-deleted_at")
     form = TopicManageForm()
     return render(
         request,
         "learnhub/topics.html",
-        {"topics": all_topics, "topic_form": form},
+        {
+            "topics": all_topics,
+            "deleted_topics": deleted_topics,
+            "topic_form": form,
+        },
     )
 
 
 def topic_manage(request):
-    """POST from Topics modal: add topic; optionally delete one; or delete only."""
+    """POST: add topic, soft-delete to bin, restore, or permanent delete."""
     if request.method != "POST":
         return redirect("topics")
 
     action = request.POST.get("action", "add")
 
+    # ---- Soft-delete (recycle bin) ----
     if action == "delete":
-        # Delete-only: do not require title/category/description
         pk = request.POST.get("remove_topic")
         if not pk:
-            messages.error(request, 'Choose a topic in "Remove old topic" before deleting.')
+            messages.error(request, 'Choose a topic in "Move to recycle bin" before deleting.')
             return redirect("topics")
-        topic = Topic.objects.filter(pk=pk).first()
+        topic = Topic.objects.active().filter(pk=pk).first()
         if topic:
             title = topic.title
-            topic.delete()
-            messages.success(request, f'Removed topic "{title}".')
+            topic.soft_delete()
+            messages.success(request, f'Moved "{title}" to the recycle bin.')
         else:
-            messages.error(request, "That topic was not found.")
+            messages.error(request, "That topic was not found (or is already in the bin).")
         return redirect("topics")
 
-    # action == add (default)
+    # ---- Restore from bin ----
+    if action == "restore":
+        pk = request.POST.get("bin_topic")
+        topic = Topic.objects.deleted().filter(pk=pk).first() if pk else None
+        if topic:
+            title = topic.title
+            topic.restore()
+            messages.success(request, f'Restored "{title}" from the recycle bin.')
+        else:
+            messages.error(request, "Could not restore that topic.")
+        return redirect("topics")
+
+    # ---- Permanent delete from bin ----
+    if action == "purge":
+        pk = request.POST.get("bin_topic")
+        topic = Topic.objects.deleted().filter(pk=pk).first() if pk else None
+        if topic:
+            title = topic.title
+            topic.delete()  # real DB delete
+            messages.success(request, f'Permanently deleted "{title}".')
+        else:
+            messages.error(request, "Could not permanently delete that topic.")
+        return redirect("topics")
+
+    # ---- Add (optionally soft-delete another) ----
     form = TopicManageForm(request.POST)
     if form.is_valid():
         title = form.cleaned_data["title"].strip()
@@ -123,10 +152,10 @@ def topic_manage(request):
 
         if remove:
             removed_title = remove.title
-            remove.delete()
+            remove.soft_delete()
             messages.success(
                 request,
-                f'Added "{title}" and removed "{removed_title}".',
+                f'Added "{title}" and moved "{removed_title}" to the recycle bin.',
             )
         else:
             messages.success(request, f'Added topic "{title}".')
@@ -140,7 +169,7 @@ def topic_manage(request):
 
 
 def topic_detail(request, pk):
-    topic = get_object_or_404(Topic, pk=pk)
+    topic = get_object_or_404(Topic.objects.active(), pk=pk)
     return render(request, "learnhub/topic_detail.html", {"topic": topic})
 
 
