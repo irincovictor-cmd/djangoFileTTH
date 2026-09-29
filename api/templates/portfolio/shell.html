@@ -157,7 +157,7 @@
       <div class="contact-section">
         <span class="eyebrow">Contact</span>
         <h2>Let’s talk</h2>
-        <p class="lead">Send a message. Stored in the database — Admin → Contacts / Profiles.</p>
+        <p class="lead">Send a message. Saved under Admin → <strong>Profiles (Portfolio)</strong> only — not mixed with LearnHub.</p>
         <div class="form-card">
           <form method="post" action="{% url 'portfolio_contact' %}">
             {% csrf_token %}
@@ -177,7 +177,7 @@
       <div class="success-wrap">
         <div class="success-icon">✓</div>
         <h2>Message sent</h2>
-        <p class="lead" style="margin: 0 auto 1.5rem;">Thanks — your message was saved successfully.</p>
+        <p class="lead" style="margin: 0 auto 1.5rem;">Thanks — your Portfolio message was saved to Profiles.</p>
         <div class="actions" style="justify-content: center;">
           <a class="btn btn-primary" href="{% url 'portfolio' %}">Back home</a>
           <a class="btn btn-ghost" href="{% url 'portfolio_contact' %}">Send another</a>

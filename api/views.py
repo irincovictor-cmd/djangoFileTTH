@@ -1,14 +1,32 @@
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from .models import Topic, Profile, Contact
-from .forms import ContactForm
+from .forms import ContactForm, TopicManageForm
 
 
 # ---------------------------------------------------------------------------
-# Shared contact save (LearnHub + Portfolio forms → same DB)
+# Contact saves — KEEP SEPARATE (do not mix)
+#   LearnHub  → Contact messages only
+#   Portfolio → Profile only
 # ---------------------------------------------------------------------------
 
-def _save_contact_submission(request, form):
+def _save_learnhub_contact(form):
+    """LearnHub form → Contact table only (Admin → Contact messages)."""
+    name = form.cleaned_data["name"].strip()
+    email = form.cleaned_data["email"].strip().lower()
+    message = form.cleaned_data["message"]
+
+    Contact.objects.create(
+        name=name,
+        email=email,
+        message=message,
+        profile=None,
+    )
+
+
+def _save_portfolio_contact(request, form):
+    """Portfolio form → Profile table only (Admin → Profiles)."""
     name = form.cleaned_data["name"].strip()
     email = form.cleaned_data["email"].strip().lower()
     message = form.cleaned_data["message"]
@@ -30,14 +48,6 @@ def _save_contact_submission(request, form):
     profile.contact_count = (profile.contact_count or 0) + 1
     profile.last_contact_at = timezone.now()
     profile.save()
-
-    Contact.objects.create(
-        profile=profile,
-        name=name,
-        email=email,
-        message=message,
-    )
-    return True
 
 
 def _portfolio(request, section="home", extra=None):
@@ -61,7 +71,60 @@ def about(request):
 
 def topics(request):
     all_topics = Topic.objects.all()
-    return render(request, "learnhub/topics.html", {"topics": all_topics})
+    form = TopicManageForm()
+    return render(
+        request,
+        "learnhub/topics.html",
+        {"topics": all_topics, "topic_form": form},
+    )
+
+
+def topic_manage(request):
+    """POST from Topics modal: add topic; optionally delete one; or delete only."""
+    if request.method != "POST":
+        return redirect("topics")
+
+    action = request.POST.get("action", "add")
+
+    if action == "delete":
+        pk = request.POST.get("remove_topic")
+        if pk:
+            topic = Topic.objects.filter(pk=pk).first()
+            if topic:
+                title = topic.title
+                topic.delete()
+                messages.success(request, f'Removed topic "{title}".')
+        return redirect("topics")
+
+    # action == add (default)
+    form = TopicManageForm(request.POST)
+    if form.is_valid():
+        title = form.cleaned_data["title"].strip()
+        tag = form.cleaned_data["tag"].strip()
+        summary = form.cleaned_data["summary"].strip()
+        body = (form.cleaned_data.get("body") or "").strip() or summary
+        remove = form.cleaned_data.get("remove_topic")
+
+        Topic.objects.create(
+            title=title,
+            tag=tag,
+            summary=summary,
+            body=body,
+        )
+
+        if remove:
+            removed_title = remove.title
+            remove.delete()
+            messages.success(
+                request,
+                f'Added "{title}" and removed "{removed_title}".',
+            )
+        else:
+            messages.success(request, f'Added topic "{title}".')
+    else:
+        messages.error(request, "Could not save topic. Check the form fields.")
+
+    return redirect("topics")
 
 
 def topic_detail(request, pk):
@@ -73,7 +136,7 @@ def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            _save_contact_submission(request, form)
+            _save_learnhub_contact(form)
             return redirect("contact_success")
     else:
         form = ContactForm()
@@ -108,7 +171,7 @@ def portfolio_contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            _save_contact_submission(request, form)
+            _save_portfolio_contact(request, form)
             return redirect("portfolio_contact_success")
     else:
         form = ContactForm()

@@ -4,8 +4,23 @@
 
 {% block content %}
 <div class="page">
-    <h1 class="page-title">Topics</h1>
-    <p class="page-sub">Browse lessons loaded from the database — click one to read more.</p>
+    <div class="topics-header">
+        <div>
+            <h1 class="page-title">Topics</h1>
+            <p class="page-sub" style="margin-bottom: 0;">Browse lessons loaded from the database — click one to read more.</p>
+        </div>
+        <button type="button" class="btn btn-ghost" id="open-topic-modal" aria-haspopup="dialog">
+            add
+        </button>
+    </div>
+
+    {% if messages %}
+    <ul class="flash-list">
+        {% for message in messages %}
+        <li class="flash {% if message.tags %}flash-{{ message.tags }}{% endif %}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
     {% if topics %}
     <div class="grid">
@@ -19,7 +34,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <p class="page-sub">No topics yet. Run migrations or add some in the admin.</p>
+    <p class="page-sub">No topics yet. Click <strong>add</strong> to create one.</p>
     {% endif %}
 
     <div class="topics-cta">
@@ -27,4 +42,177 @@
         <a href="{% url 'contact' %}" class="btn btn-primary">Ask a question</a>
     </div>
 </div>
+
+{# ---- Add / replace topic modal ---- #}
+<div class="modal-backdrop" id="topic-modal" hidden>
+    <div class="modal" role="dialog" aria-labelledby="topic-modal-title" aria-modal="true">
+        <div class="modal-head">
+            <h2 id="topic-modal-title">Manage topics</h2>
+            <button type="button" class="modal-close" id="close-topic-modal" aria-label="Close">×</button>
+        </div>
+
+        <form method="post" action="{% url 'topic_manage' %}" class="modal-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_title">Topic name</label>
+                {{ topic_form.title }}
+            </div>
+            <div class="form-group">
+                <label for="id_tag">Category</label>
+                {{ topic_form.tag }}
+            </div>
+            <div class="form-group">
+                <label for="id_summary">Description</label>
+                {{ topic_form.summary }}
+            </div>
+            <div class="form-group">
+                <label for="id_body">Full body (optional)</label>
+                {{ topic_form.body }}
+            </div>
+            <div class="form-group">
+                <label for="id_remove_topic">Remove old topic</label>
+                {{ topic_form.remove_topic }}
+                <p class="field-hint">When you add a new topic, pick an old one to remove (or leave none).</p>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" name="action" value="add" class="btn btn-primary">Add topic</button>
+                <button type="submit" name="action" value="delete" class="btn btn-ghost"
+                        onclick="return confirm('Delete the selected topic only?');
+                        ">Delete selected</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .topics-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+        flex-wrap: wrap;
+    }
+    .topics-header .page-title { margin-bottom: 0.35rem; }
+    .flash-list { list-style: none; margin: 0 0 1.25rem; padding: 0; }
+    .flash {
+        background: rgba(156, 59, 44, 0.08);
+        border: 1px solid var(--margin-soft);
+        color: var(--margin);
+        padding: 0.65rem 0.9rem;
+        border-radius: 3px;
+        margin-bottom: 0.5rem;
+        font-size: 0.92rem;
+    }
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(34, 40, 58, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        padding: 1rem;
+    }
+    .modal-backdrop[hidden] { display: none; }
+    .modal {
+        background: var(--paper-card);
+        border: 1.5px solid var(--line);
+        border-left: 3px solid var(--margin);
+        border-radius: 4px;
+        width: 100%;
+        max-width: 440px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 1.25rem 1.4rem 1.5rem;
+        box-shadow: 6px 8px 0 var(--line);
+    }
+    .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    .modal-head h2 {
+        font-size: 1.25rem;
+        margin: 0;
+    }
+    .modal-close {
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--ink-soft);
+        padding: 0.15rem 0.4rem;
+    }
+    .modal-close:hover { color: var(--ink); }
+    .modal-form .form-group { margin-bottom: 1rem; }
+    .modal-form label {
+        display: block;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--ink-soft);
+        margin-bottom: 0.35rem;
+    }
+    .modal-form input,
+    .modal-form textarea,
+    .modal-form select {
+        width: 100%;
+        padding: 0.5rem 0.65rem;
+        border: 1.5px solid var(--line);
+        border-radius: 3px;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 0.95rem;
+    }
+    .modal-form input:focus,
+    .modal-form textarea:focus,
+    .modal-form select:focus {
+        outline: none;
+        border-color: var(--margin);
+    }
+    .field-hint {
+        font-size: 0.78rem;
+        color: var(--ink-faint);
+        margin-top: 0.3rem;
+    }
+    .modal-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1.25rem;
+    }
+</style>
+
+<script>
+(function () {
+    var modal = document.getElementById('topic-modal');
+    var openBtn = document.getElementById('open-topic-modal');
+    var closeBtn = document.getElementById('close-topic-modal');
+    if (!modal || !openBtn) return;
+
+    function openModal() {
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        modal.hidden = true;
+        document.body.style.overflow = '';
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+})();
+</script>
 {% endblock %}
