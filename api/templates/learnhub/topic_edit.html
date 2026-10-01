@@ -1,0 +1,45 @@
+{% extends 'learnhub/base.html' %}
+
+{% block title %}Edit · {{ topic.title }}{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-center">
+        <p class="page-sub" style="margin-bottom: 0.5rem;">
+            <a href="{% url 'topic_detail' topic.pk %}" style="color: var(--ink-soft); text-decoration: none;">&larr; Back to topic</a>
+        </p>
+
+        <span class="eyebrow">Edit topic</span>
+        <h1 class="page-title">Update “{{ topic.title }}”</h1>
+        <p class="page-sub">Change the fields below. Soft-delete and recycle bin are unchanged — use Topics → Add topic / Recycle bin for those.</p>
+
+        <div class="glass-card" style="max-width: 520px;">
+            <form method="post" action="{% url 'topic_edit' topic.pk %}">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="field-hint" style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 0.3rem;">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% if field.errors %}
+                    <div class="field-errors" style="color: var(--margin); font-size: 0.85rem;">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                <div class="field-errors" style="color: var(--margin);">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="actions-row" style="justify-content: flex-start; margin-top: 1.25rem;">
+                    <button type="submit" class="btn btn-primary">Update topic</button>
+                    <a href="{% url 'topic_detail' topic.pk %}" class="btn btn-ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

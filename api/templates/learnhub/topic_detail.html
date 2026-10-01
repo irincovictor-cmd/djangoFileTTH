@@ -55,7 +55,8 @@
         </div>
 
         <div class="actions-row">
-            <a href="{% url 'topics' %}" class="btn btn-primary">All topics</a>
+            <a href="{% url 'topic_edit' topic.pk %}" class="btn btn-primary">Edit topic</a>
+            <a href="{% url 'topics' %}" class="btn btn-ghost">All topics</a>
             <a href="{% url 'contact' %}" class="btn btn-ghost">Ask a question</a>
         </div>
     </div>

@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from .models import Topic, Profile, Contact
-from .forms import ContactForm, TopicManageForm
+from .forms import ContactForm, TopicManageForm, TopicEditForm
 
 
 # ---------------------------------------------------------------------------
@@ -166,6 +166,30 @@ def topic_manage(request):
         )
 
     return redirect("topics")
+
+
+def topic_edit(request, pk):
+    """Edit an active topic.
+
+    Pattern adapted from reference topic_edit (load → POST update → redirect).
+    Does not replace add / soft-delete / recycle bin; only updates existing rows.
+    """
+    topic = get_object_or_404(Topic.objects.active(), pk=pk)
+
+    if request.method == "POST":
+        form = TopicEditForm(request.POST, instance=topic)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Updated topic "{topic.title}".')
+            return redirect("topic_detail", pk=topic.pk)
+    else:
+        form = TopicEditForm(instance=topic)
+
+    return render(
+        request,
+        "learnhub/topic_edit.html",
+        {"form": form, "topic": topic},
+    )
 
 
 def topic_detail(request, pk):

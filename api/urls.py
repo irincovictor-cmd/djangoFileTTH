@@ -7,8 +7,9 @@ URL map — no overlapping paths between the two sites.
 LearnHub  (notebook theme)
   /                     home
   /home/                home (alias)
-  /topics/              topic list (+ add modal)
-  /topics/manage/       POST add / replace / delete topic
+  /topics/              topic list (+ add modal, recycle bin)
+  /topics/manage/       POST add / soft-delete / restore / purge
+  /topics/<id>/edit/    edit active topic (integrated from reference idea)
   /topics/<id>/         topic detail
   /about/               about
   /contact/             contact form → Contact messages only
@@ -24,6 +25,8 @@ urlpatterns = [
     path("home/", views.home, name="home_page"),
     path("topics/", views.topics, name="topics"),
     path("topics/manage/", views.topic_manage, name="topic_manage"),
+    # edit must be registered before topics/<pk>/ so "edit" is not captured as pk
+    path("topics/<int:pk>/edit/", views.topic_edit, name="topic_edit"),
     path("topics/<int:pk>/", views.topic_detail, name="topic_detail"),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),

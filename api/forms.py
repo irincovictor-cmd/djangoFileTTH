@@ -101,5 +101,62 @@ class TopicManageForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Fresh queryset each time (active topics only)
         self.fields["remove_topic"].queryset = Topic.objects.active()
+
+
+class TopicEditForm(forms.ModelForm):
+    """Edit an existing active topic.
+
+    Idea adapted from reference topic_edit (Hannah): load → form → save.
+    Uses this project's Topic fields and LearnHub naming (not name/category/description).
+    """
+
+    class Meta:
+        model = Topic
+        fields = [
+            "title",
+            "tag",
+            "summary",
+            "body",
+            "resource_url",
+            "resource_label",
+        ]
+        labels = {
+            "title": "Topic name",
+            "tag": "Category",
+            "summary": "Description",
+            "body": "Full body",
+            "resource_url": "Learn more link",
+            "resource_label": "Link label",
+        }
+        widgets = {
+            "title": forms.TextInput(
+                attrs={"placeholder": "e.g. What is Django?", "class": "form-control"}
+            ),
+            "tag": forms.TextInput(
+                attrs={"placeholder": "e.g. Basics, Routing", "class": "form-control"}
+            ),
+            "summary": forms.Textarea(
+                attrs={
+                    "placeholder": "Short description on the topics list",
+                    "rows": 3,
+                    "class": "form-control",
+                }
+            ),
+            "body": forms.Textarea(
+                attrs={
+                    "placeholder": "Longer text for the detail page",
+                    "rows": 5,
+                    "class": "form-control",
+                }
+            ),
+            "resource_url": forms.URLInput(
+                attrs={
+                    "placeholder": "https://docs.djangoproject.com/...",
+                    "class": "form-control",
+                }
+            ),
+            "resource_label": forms.TextInput(
+                attrs={"placeholder": "Learn more", "class": "form-control"}
+            ),
+        }
