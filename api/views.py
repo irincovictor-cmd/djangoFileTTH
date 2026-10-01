@@ -85,17 +85,17 @@ def topics(request):
 
 
 def topic_manage(request):
-    """POST: add topic, soft-delete to bin, restore, or permanent delete."""
+    """POST: add topic, soft-delete (from edit page), restore, or permanent delete."""
     if request.method != "POST":
         return redirect("topics")
 
     action = request.POST.get("action", "add")
 
-    # ---- Soft-delete (recycle bin) ----
+    # ---- Soft-delete (from Edit topic page) ----
     if action == "delete":
-        pk = request.POST.get("remove_topic")
+        pk = request.POST.get("topic_id") or request.POST.get("remove_topic")
         if not pk:
-            messages.error(request, 'Choose a topic in "Move to recycle bin" before deleting.')
+            messages.error(request, "No topic selected to move to the recycle bin.")
             return redirect("topics")
         topic = Topic.objects.active().filter(pk=pk).first()
         if topic:
@@ -124,13 +124,13 @@ def topic_manage(request):
         topic = Topic.objects.deleted().filter(pk=pk).first() if pk else None
         if topic:
             title = topic.title
-            topic.delete()  # real DB delete
+            topic.delete()
             messages.success(request, f'Permanently deleted "{title}".')
         else:
             messages.error(request, "Could not permanently delete that topic.")
         return redirect("topics")
 
-    # ---- Add (optionally soft-delete another) ----
+    # ---- Add only (no delete in this path) ----
     form = TopicManageForm(request.POST)
     if form.is_valid():
         title = form.cleaned_data["title"].strip()
@@ -139,7 +139,6 @@ def topic_manage(request):
         body = (form.cleaned_data.get("body") or "").strip() or summary
         resource_url = form.cleaned_data.get("resource_url") or ""
         resource_label = (form.cleaned_data.get("resource_label") or "").strip() or "Learn more"
-        remove = form.cleaned_data.get("remove_topic")
 
         Topic.objects.create(
             title=title,
@@ -149,16 +148,7 @@ def topic_manage(request):
             resource_url=resource_url,
             resource_label=resource_label,
         )
-
-        if remove:
-            removed_title = remove.title
-            remove.soft_delete()
-            messages.success(
-                request,
-                f'Added "{title}" and moved "{removed_title}" to the recycle bin.',
-            )
-        else:
-            messages.success(request, f'Added topic "{title}".')
+        messages.success(request, f'Added topic "{title}".')
     else:
         messages.error(
             request,
@@ -169,11 +159,7 @@ def topic_manage(request):
 
 
 def topic_edit(request, pk):
-    """Edit an active topic.
-
-    Pattern adapted from reference topic_edit (load → POST update → redirect).
-    Does not replace add / soft-delete / recycle bin; only updates existing rows.
-    """
+    """Edit an active topic; soft-delete is available on this page (not on Add)."""
     topic = get_object_or_404(Topic.objects.active(), pk=pk)
 
     if request.method == "POST":

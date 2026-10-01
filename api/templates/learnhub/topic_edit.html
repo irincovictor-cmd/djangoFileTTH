@@ -11,7 +11,7 @@
 
         <span class="eyebrow">Edit topic</span>
         <h1 class="page-title">Update “{{ topic.title }}”</h1>
-        <p class="page-sub">Change the fields below. Soft-delete and recycle bin are unchanged — use Topics → Add topic / Recycle bin for those.</p>
+        <p class="page-sub">Change the fields below, or move this topic to the recycle bin if you no longer want it on the list.</p>
 
         <div class="glass-card" style="max-width: 520px;">
             <form method="post" action="{% url 'topic_edit' topic.pk %}">
@@ -39,7 +39,30 @@
                     <a href="{% url 'topic_detail' topic.pk %}" class="btn btn-ghost">Cancel</a>
                 </div>
             </form>
+
+            {# Soft-delete lives here (manage this topic), not inside Add topic #}
+            <div class="edit-danger-zone">
+                <p class="field-hint" style="margin-bottom: 0.65rem;">
+                    Move to recycle bin — hidden from Topics, can be restored later.
+                </p>
+                <form method="post" action="{% url 'topic_manage' %}"
+                      onsubmit="return confirm('Move &quot;{{ topic.title|escapejs }}&quot; to the recycle bin? You can restore it later.');">
+                    {% csrf_token %}
+                    <input type="hidden" name="topic_id" value="{{ topic.pk }}">
+                    <button type="submit" name="action" value="delete" class="btn btn-ghost">
+                        Move to recycle bin
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .edit-danger-zone {
+        margin-top: 1.75rem;
+        padding-top: 1.25rem;
+        border-top: 1.5px dashed var(--line);
+    }
+</style>
 {% endblock %}

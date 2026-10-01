@@ -34,7 +34,7 @@ class ContactForm(forms.ModelForm):
 
 
 class TopicManageForm(forms.Form):
-    """Modal form: add a topic and optionally move an existing one to recycle bin."""
+    """Add-topic modal only (no delete here — use Edit topic for move to bin)."""
 
     title = forms.CharField(
         max_length=200,
@@ -90,25 +90,13 @@ class TopicManageForm(forms.Form):
             }
         ),
     )
-    remove_topic = forms.ModelChoiceField(
-        queryset=Topic.objects.active(),
-        required=False,
-        label="Move to recycle bin",
-        empty_label="— None —",
-        help_text="Optional: soft-delete this topic (can restore later).",
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["remove_topic"].queryset = Topic.objects.active()
 
 
 class TopicEditForm(forms.ModelForm):
     """Edit an existing active topic.
 
     Idea adapted from reference topic_edit (Hannah): load → form → save.
-    Uses this project's Topic fields and LearnHub naming (not name/category/description).
+    Soft-delete (move to bin) is offered on the edit page, not on Add.
     """
 
     class Meta:

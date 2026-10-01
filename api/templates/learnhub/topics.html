@@ -54,7 +54,7 @@
     </div>
 </div>
 
-{# ---- Add / soft-delete modal ---- #}
+{# ---- Add topic modal (add only) ---- #}
 <div class="modal-backdrop" id="topic-modal" hidden>
     <div class="modal" role="dialog" aria-labelledby="topic-modal-title" aria-modal="true">
         <div class="modal-head">
@@ -90,17 +90,9 @@
                 <label for="id_resource_label">Link label (optional)</label>
                 {{ topic_form.resource_label }}
             </div>
-            <div class="form-group">
-                <label for="id_remove_topic">Move to recycle bin</label>
-                {{ topic_form.remove_topic }}
-                <p class="field-hint">Soft-delete: topic is hidden but can be restored later.</p>
-            </div>
 
             <div class="modal-actions">
                 <button type="submit" name="action" value="add" class="btn btn-primary">Add topic</button>
-                <button type="submit" name="action" value="delete" class="btn btn-ghost"
-                        formnovalidate
-                        onclick="return confirmSoftDelete();">Move to bin</button>
             </div>
         </form>
     </div>
@@ -114,7 +106,7 @@
             <h2 id="bin-modal-title">Recycle bin</h2>
             <button type="button" class="modal-close" data-close-modal="bin-modal" aria-label="Close">×</button>
         </div>
-        <p class="field-hint" style="margin-bottom: 1rem;">Deleted topics stay in the database until you restore or permanently delete them.</p>
+        <p class="field-hint" style="margin-bottom: 1rem;">Deleted topics stay in the database until you restore or permanently delete them. Move a topic to the bin from its <strong>Edit</strong> page.</p>
 
         <ul class="bin-list">
             {% for t in deleted_topics %}
@@ -359,15 +351,5 @@
         document.body.style.overflow = '';
     });
 })();
-
-function confirmSoftDelete() {
-    var select = document.getElementById('id_remove_topic');
-    if (!select || !select.value) {
-        alert('Choose a topic in "Move to recycle bin" first.');
-        return false;
-    }
-    var label = select.options[select.selectedIndex].text;
-    return confirm('Move "' + label + '" to the recycle bin? You can restore it later.');
-}
 </script>
 {% endblock %}
