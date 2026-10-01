@@ -57,6 +57,28 @@ def _portfolio(request, section="home", extra=None):
     return render(request, "portfolio/shell.html", ctx)
 
 
+def _get_active_topic_or_fallback(request, pk):
+    """Return active topic, or redirect to topics with a clear message.
+
+    Covers: deleted in Admin, purged from bin, or sitting in recycle bin.
+    """
+    topic = Topic.objects.active().filter(pk=pk).first()
+    if topic:
+        return topic
+
+    if Topic.objects.deleted().filter(pk=pk).exists():
+        messages.warning(
+            request,
+            "That topic is in the recycle bin. Restore it from Topics → Recycle bin if you still need it.",
+        )
+    else:
+        messages.warning(
+            request,
+            "That topic is no longer available. It may have been deleted. Browse the list below.",
+        )
+    return None
+
+
 # ---------------------------------------------------------------------------
 # LearnHub  →  templates/learnhub/
 # ---------------------------------------------------------------------------
@@ -130,7 +152,7 @@ def topic_manage(request):
             messages.error(request, "Could not permanently delete that topic.")
         return redirect("topics")
 
-    # ---- Add only (no delete in this path) ----
+    # ---- Add only ----
     form = TopicManageForm(request.POST)
     if form.is_valid():
         title = form.cleaned_data["title"].strip()
@@ -160,7 +182,9 @@ def topic_manage(request):
 
 def topic_edit(request, pk):
     """Edit an active topic; soft-delete is available on this page (not on Add)."""
-    topic = get_object_or_404(Topic.objects.active(), pk=pk)
+    topic = _get_active_topic_or_fallback(request, pk)
+    if topic is None:
+        return redirect("topics")
 
     if request.method == "POST":
         form = TopicEditForm(request.POST, instance=topic)
@@ -179,7 +203,9 @@ def topic_edit(request, pk):
 
 
 def topic_detail(request, pk):
-    topic = get_object_or_404(Topic.objects.active(), pk=pk)
+    topic = _get_active_topic_or_fallback(request, pk)
+    if topic is None:
+        return redirect("topics")
     return render(request, "learnhub/topic_detail.html", {"topic": topic})
 
 
