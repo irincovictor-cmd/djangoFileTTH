@@ -15,13 +15,8 @@
                 <span class="btn-add-text">Add topic</span>
             </button>
             <button type="button" class="btn-history" id="open-history-modal" aria-haspopup="dialog">
-                History{% if topic_history %} ({{ topic_history|length }}){% endif %}
+                History{% if topic_history or deleted_topics %} ({% if topic_history %}{{ topic_history|length }}{% else %}0{% endif %}){% endif %}
             </button>
-            {% if deleted_topics %}
-            <button type="button" class="btn-bin" id="open-bin-modal" aria-haspopup="dialog">
-                Recycle bin ({{ deleted_topics|length }})
-            </button>
-            {% endif %}
         </div>
     </div>
 
@@ -101,74 +96,73 @@
     </div>
 </div>
 
-{# ---- History modal ---- #}
+{# ---- History: activity log + topics currently in bin (restore / purge) ---- #}
 <div class="modal-backdrop" id="history-modal" hidden>
     <div class="modal modal-wide" role="dialog" aria-labelledby="history-modal-title" aria-modal="true">
         <div class="modal-head">
             <h2 id="history-modal-title">Topic history</h2>
             <button type="button" class="modal-close" data-close-modal="history-modal" aria-label="Close">×</button>
         </div>
-        <p class="field-hint" style="margin-bottom: 1rem;">
-            Log of topics that were added, moved to the recycle bin, restored, updated, or permanently deleted.
-        </p>
 
-        {% if topic_history %}
-        <ul class="history-list">
-            {% for entry in topic_history %}
-            <li class="history-item history-{{ entry.action }}">
-                <span class="history-badge history-badge-{{ entry.action }}">{{ entry.get_action_display }}</span>
-                <div class="history-item-info">
-                    <strong>{{ entry.topic_title }}</strong>
-                    {% if entry.topic_tag %}
-                    <span class="history-tag">{{ entry.topic_tag }}</span>
-                    {% endif %}
-                    <span class="history-meta">{{ entry.created_at|date:"M j, Y H:i" }}</span>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="page-sub" style="margin: 0;">No history yet. Add, edit, or remove a topic to see entries here.</p>
-        {% endif %}
-    </div>
-</div>
-
-{# ---- Recycle bin modal ---- #}
-{% if deleted_topics %}
-<div class="modal-backdrop" id="bin-modal" hidden>
-    <div class="modal" role="dialog" aria-labelledby="bin-modal-title" aria-modal="true">
-        <div class="modal-head">
-            <h2 id="bin-modal-title">Recycle bin</h2>
-            <button type="button" class="modal-close" data-close-modal="bin-modal" aria-label="Close">×</button>
+        {% if deleted_topics %}
+        <div class="history-section">
+            <h3 class="history-section-title">In recycle bin</h3>
+            <p class="field-hint" style="margin-bottom: 0.75rem;">
+                Soft-deleted topics. Restore them or delete forever. (Move to bin from a topic’s <strong>Edit</strong> page.)
+            </p>
+            <ul class="bin-list">
+                {% for t in deleted_topics %}
+                <li class="bin-item">
+                    <div class="bin-item-info">
+                        <strong>{{ t.title }}</strong>
+                        <span class="bin-meta">{{ t.tag }} · removed {{ t.deleted_at|date:"M j, Y H:i" }}</span>
+                    </div>
+                    <div class="bin-item-actions">
+                        <form method="post" action="{% url 'topic_manage' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="bin_topic" value="{{ t.pk }}">
+                            <button type="submit" name="action" value="restore" class="btn btn-primary" style="padding: 0.4rem 0.75rem; font-size: 0.85rem;">Restore</button>
+                        </form>
+                        <form method="post" action="{% url 'topic_manage' %}" style="display:inline;"
+                              onsubmit="return confirm('Permanently delete {{ t.title|escapejs }}? This cannot be undone.');">
+                            {% csrf_token %}
+                            <input type="hidden" name="bin_topic" value="{{ t.pk }}">
+                            <button type="submit" name="action" value="purge" class="btn btn-ghost" style="padding: 0.4rem 0.75rem; font-size: 0.85rem;">Delete forever</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
-        <p class="field-hint" style="margin-bottom: 1rem;">Deleted topics stay in the database until you restore or permanently delete them. Move a topic to the bin from its <strong>Edit</strong> page.</p>
+        {% endif %}
 
-        <ul class="bin-list">
-            {% for t in deleted_topics %}
-            <li class="bin-item">
-                <div class="bin-item-info">
-                    <strong>{{ t.title }}</strong>
-                    <span class="bin-meta">{{ t.tag }} · removed {{ t.deleted_at|date:"M j, Y H:i" }}</span>
-                </div>
-                <div class="bin-item-actions">
-                    <form method="post" action="{% url 'topic_manage' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="bin_topic" value="{{ t.pk }}">
-                        <button type="submit" name="action" value="restore" class="btn btn-primary" style="padding: 0.4rem 0.75rem; font-size: 0.85rem;">Restore</button>
-                    </form>
-                    <form method="post" action="{% url 'topic_manage' %}" style="display:inline;"
-                          onsubmit="return confirm('Permanently delete {{ t.title|escapejs }}? This cannot be undone.');">
-                        {% csrf_token %}
-                        <input type="hidden" name="bin_topic" value="{{ t.pk }}">
-                        <button type="submit" name="action" value="purge" class="btn btn-ghost" style="padding: 0.4rem 0.75rem; font-size: 0.85rem;">Delete forever</button>
-                    </form>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
+        <div class="history-section">
+            <h3 class="history-section-title">Activity log</h3>
+            <p class="field-hint" style="margin-bottom: 0.75rem;">
+                Record of topics that were added, moved to the bin, restored, updated, or permanently deleted.
+            </p>
+
+            {% if topic_history %}
+            <ul class="history-list">
+                {% for entry in topic_history %}
+                <li class="history-item history-{{ entry.action }}">
+                    <span class="history-badge history-badge-{{ entry.action }}">{{ entry.get_action_display }}</span>
+                    <div class="history-item-info">
+                        <strong>{{ entry.topic_title }}</strong>
+                        {% if entry.topic_tag %}
+                        <span class="history-tag">{{ entry.topic_tag }}</span>
+                        {% endif %}
+                        <span class="history-meta">{{ entry.created_at|date:"M j, Y H:i" }}</span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="page-sub" style="margin: 0;">No history yet. Add, edit, or remove a topic to see entries here.</p>
+            {% endif %}
+        </div>
     </div>
 </div>
-{% endif %}
 
 <style>
     .topics-header {
@@ -215,23 +209,19 @@
         font-weight: 700;
         line-height: 1;
     }
-    .btn-bin,
     .btn-history {
         padding: 0.6rem 1rem;
-        border: 1.5px dashed var(--ink-soft);
+        border: 1.5px solid var(--ink);
         border-radius: 3px;
-        background: transparent;
-        color: var(--ink-soft);
+        background: var(--paper-card);
+        color: var(--ink);
         font-family: inherit;
         font-weight: 600;
         font-size: 0.9rem;
         cursor: pointer;
     }
-    .btn-bin:hover,
     .btn-history:hover {
-        border-color: var(--ink);
-        color: var(--ink);
-        background: rgba(34,40,58,0.04);
+        background: rgba(34,40,58,0.06);
     }
 
     .card-link-hint {
@@ -275,7 +265,7 @@
         padding: 1.25rem 1.4rem 1.5rem;
         box-shadow: 6px 8px 0 var(--line);
     }
-    .modal-wide { max-width: 520px; }
+    .modal-wide { max-width: 540px; }
     .modal-head {
         display: flex;
         align-items: center;
@@ -332,6 +322,15 @@
         margin-top: 1.25rem;
     }
 
+    .history-section { margin-bottom: 1.35rem; }
+    .history-section:last-child { margin-bottom: 0; }
+    .history-section-title {
+        font-size: 0.95rem;
+        margin: 0 0 0.35rem;
+        font-family: inherit;
+        color: var(--ink);
+    }
+
     .bin-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
     .bin-item {
         display: flex;
@@ -354,7 +353,7 @@
         padding: 0;
         display: grid;
         gap: 0.65rem;
-        max-height: 55vh;
+        max-height: 40vh;
         overflow-y: auto;
     }
     .history-item {
@@ -434,9 +433,6 @@
 
     var openAdd = document.getElementById('open-topic-modal');
     if (openAdd) openAdd.addEventListener('click', function () { openModal('topic-modal'); });
-
-    var openBin = document.getElementById('open-bin-modal');
-    if (openBin) openBin.addEventListener('click', function () { openModal('bin-modal'); });
 
     var openHistory = document.getElementById('open-history-modal');
     if (openHistory) openHistory.addEventListener('click', function () { openModal('history-modal'); });
