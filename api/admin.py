@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Topic, Contact, Profile
+from .models import Topic, TopicHistory, Contact, Profile
 
 
 @admin.register(Topic)
@@ -23,6 +23,21 @@ class TopicAdmin(admin.ModelAdmin):
     def soft_delete_topics(self, request, queryset):
         for t in queryset.active():
             t.soft_delete()
+
+
+@admin.register(TopicHistory)
+class TopicHistoryAdmin(admin.ModelAdmin):
+    list_display = ("created_at", "action", "topic_title", "topic_tag", "topic_id")
+    list_filter = ("action", "created_at")
+    search_fields = ("topic_title", "topic_tag")
+    readonly_fields = ("action", "topic_title", "topic_tag", "topic_id", "created_at")
+    ordering = ("-created_at",)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Profile)

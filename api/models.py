@@ -65,6 +65,58 @@ class Topic(models.Model):
         self.save(update_fields=["deleted_at"])
 
 
+class TopicHistory(models.Model):
+    """Activity log for Topics: added, moved to bin, restored, permanently deleted.
+
+    Keeps a title snapshot so history remains after a topic is purged.
+    """
+
+    ACTION_ADDED = "added"
+    ACTION_DELETED = "deleted"  # soft-delete → recycle bin
+    ACTION_RESTORED = "restored"
+    ACTION_PURGED = "purged"  # permanent delete
+    ACTION_UPDATED = "updated"
+
+    ACTION_CHOICES = [
+        (ACTION_ADDED, "Added"),
+        (ACTION_DELETED, "Moved to recycle bin"),
+        (ACTION_RESTORED, "Restored"),
+        (ACTION_PURGED, "Permanently deleted"),
+        (ACTION_UPDATED, "Updated"),
+    ]
+
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    topic_title = models.CharField(max_length=200, help_text="Title at the time of the event")
+    topic_tag = models.CharField(max_length=50, blank=True)
+    topic_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="Topic pk when still known (null after permanent delete)",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Topic history"
+        verbose_name_plural = "Topic history"
+
+    def __str__(self):
+        return f"{self.get_action_display()}: {self.topic_title}"
+
+    @classmethod
+    def log(cls, action, topic=None, title="", tag="", topic_id=None):
+        if topic is not None:
+            title = topic.title
+            tag = topic.tag or ""
+            topic_id = topic.pk
+        return cls.objects.create(
+            action=action,
+            topic_title=title or "(unknown)",
+            topic_tag=tag or "",
+            topic_id=topic_id,
+        )
+
+
 class Profile(models.Model):
     """
     Portfolio contact submissions only.

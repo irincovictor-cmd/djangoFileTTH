@@ -14,6 +14,9 @@
                 <span class="btn-add-icon" aria-hidden="true">+</span>
                 <span class="btn-add-text">Add topic</span>
             </button>
+            <button type="button" class="btn-history" id="open-history-modal" aria-haspopup="dialog">
+                History{% if topic_history %} ({{ topic_history|length }}){% endif %}
+            </button>
             {% if deleted_topics %}
             <button type="button" class="btn-bin" id="open-bin-modal" aria-haspopup="dialog">
                 Recycle bin ({{ deleted_topics|length }})
@@ -95,6 +98,38 @@
                 <button type="submit" name="action" value="add" class="btn btn-primary">Add topic</button>
             </div>
         </form>
+    </div>
+</div>
+
+{# ---- History modal ---- #}
+<div class="modal-backdrop" id="history-modal" hidden>
+    <div class="modal modal-wide" role="dialog" aria-labelledby="history-modal-title" aria-modal="true">
+        <div class="modal-head">
+            <h2 id="history-modal-title">Topic history</h2>
+            <button type="button" class="modal-close" data-close-modal="history-modal" aria-label="Close">×</button>
+        </div>
+        <p class="field-hint" style="margin-bottom: 1rem;">
+            Log of topics that were added, moved to the recycle bin, restored, updated, or permanently deleted.
+        </p>
+
+        {% if topic_history %}
+        <ul class="history-list">
+            {% for entry in topic_history %}
+            <li class="history-item history-{{ entry.action }}">
+                <span class="history-badge history-badge-{{ entry.action }}">{{ entry.get_action_display }}</span>
+                <div class="history-item-info">
+                    <strong>{{ entry.topic_title }}</strong>
+                    {% if entry.topic_tag %}
+                    <span class="history-tag">{{ entry.topic_tag }}</span>
+                    {% endif %}
+                    <span class="history-meta">{{ entry.created_at|date:"M j, Y H:i" }}</span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="page-sub" style="margin: 0;">No history yet. Add, edit, or remove a topic to see entries here.</p>
+        {% endif %}
     </div>
 </div>
 
@@ -180,7 +215,8 @@
         font-weight: 700;
         line-height: 1;
     }
-    .btn-bin {
+    .btn-bin,
+    .btn-history {
         padding: 0.6rem 1rem;
         border: 1.5px dashed var(--ink-soft);
         border-radius: 3px;
@@ -191,7 +227,12 @@
         font-size: 0.9rem;
         cursor: pointer;
     }
-    .btn-bin:hover { border-color: var(--ink); color: var(--ink); background: rgba(34,40,58,0.04); }
+    .btn-bin:hover,
+    .btn-history:hover {
+        border-color: var(--ink);
+        color: var(--ink);
+        background: rgba(34,40,58,0.04);
+    }
 
     .card-link-hint {
         display: inline-block;
@@ -234,6 +275,7 @@
         padding: 1.25rem 1.4rem 1.5rem;
         box-shadow: 6px 8px 0 var(--line);
     }
+    .modal-wide { max-width: 520px; }
     .modal-head {
         display: flex;
         align-items: center;
@@ -305,6 +347,74 @@
     .bin-item-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
     .bin-meta { font-size: 0.78rem; color: var(--ink-faint); }
     .bin-item-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+    .history-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.65rem;
+        max-height: 55vh;
+        overflow-y: auto;
+    }
+    .history-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 0.9rem;
+        background: var(--paper);
+        border: 1.5px solid var(--line);
+        border-radius: 3px;
+    }
+    .history-badge {
+        flex-shrink: 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        white-space: nowrap;
+    }
+    .history-badge-added {
+        background: rgba(46, 125, 50, 0.12);
+        color: #2e7d32;
+    }
+    .history-badge-deleted {
+        background: rgba(156, 59, 44, 0.12);
+        color: var(--margin);
+    }
+    .history-badge-restored {
+        background: rgba(25, 118, 210, 0.12);
+        color: #1565c0;
+    }
+    .history-badge-purged {
+        background: rgba(34, 40, 58, 0.1);
+        color: var(--ink-soft);
+    }
+    .history-badge-updated {
+        background: rgba(245, 166, 35, 0.18);
+        color: #9a6700;
+    }
+    .history-item-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        min-width: 0;
+    }
+    .history-item-info strong {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+    .history-tag {
+        font-size: 0.78rem;
+        color: var(--ink-soft);
+    }
+    .history-meta {
+        font-size: 0.75rem;
+        color: var(--ink-faint);
+    }
 </style>
 
 <script>
@@ -327,6 +437,9 @@
 
     var openBin = document.getElementById('open-bin-modal');
     if (openBin) openBin.addEventListener('click', function () { openModal('bin-modal'); });
+
+    var openHistory = document.getElementById('open-history-modal');
+    if (openHistory) openHistory.addEventListener('click', function () { openModal('history-modal'); });
 
     document.querySelectorAll('[data-close-modal]').forEach(function (btn) {
         btn.addEventListener('click', function () {

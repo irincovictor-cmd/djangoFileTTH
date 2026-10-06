@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from .models import Topic, Profile, Contact
+from .models import Topic, TopicHistory, Profile, Contact
 from .forms import ContactForm, TopicManageForm, TopicEditForm
 
 
@@ -94,6 +94,7 @@ def about(request):
 def topics(request):
     all_topics = Topic.objects.active()
     deleted_topics = Topic.objects.deleted().order_by("-deleted_at")
+    history = TopicHistory.objects.all()[:50]
     form = TopicManageForm()
     return render(
         request,
@@ -101,6 +102,7 @@ def topics(request):
         {
             "topics": all_topics,
             "deleted_topics": deleted_topics,
+            "topic_history": history,
             "topic_form": form,
         },
     )
@@ -122,6 +124,7 @@ def topic_manage(request):
         topic = Topic.objects.active().filter(pk=pk).first()
         if topic:
             title = topic.title
+            TopicHistory.log(TopicHistory.ACTION_DELETED, topic=topic)
             topic.soft_delete()
             messages.success(request, f'Moved "{title}" to the recycle bin.')
         else:
@@ -135,6 +138,7 @@ def topic_manage(request):
         if topic:
             title = topic.title
             topic.restore()
+            TopicHistory.log(TopicHistory.ACTION_RESTORED, topic=topic)
             messages.success(request, f'Restored "{title}" from the recycle bin.')
         else:
             messages.error(request, "Could not restore that topic.")
@@ -146,6 +150,14 @@ def topic_manage(request):
         topic = Topic.objects.deleted().filter(pk=pk).first() if pk else None
         if topic:
             title = topic.title
+            tag = topic.tag
+            tid = topic.pk
+            TopicHistory.log(
+                TopicHistory.ACTION_PURGED,
+                title=title,
+                tag=tag,
+                topic_id=tid,
+            )
             topic.delete()
             messages.success(request, f'Permanently deleted "{title}".')
         else:
@@ -162,7 +174,7 @@ def topic_manage(request):
         resource_url = form.cleaned_data.get("resource_url") or ""
         resource_label = (form.cleaned_data.get("resource_label") or "").strip() or "Learn more"
 
-        Topic.objects.create(
+        topic = Topic.objects.create(
             title=title,
             tag=tag,
             summary=summary,
@@ -170,6 +182,7 @@ def topic_manage(request):
             resource_url=resource_url,
             resource_label=resource_label,
         )
+        TopicHistory.log(TopicHistory.ACTION_ADDED, topic=topic)
         messages.success(request, f'Added topic "{title}".')
     else:
         messages.error(
@@ -190,6 +203,7 @@ def topic_edit(request, pk):
         form = TopicEditForm(request.POST, instance=topic)
         if form.is_valid():
             form.save()
+            TopicHistory.log(TopicHistory.ACTION_UPDATED, topic=topic)
             messages.success(request, f'Updated topic "{topic.title}".')
             return redirect("topic_detail", pk=topic.pk)
     else:
