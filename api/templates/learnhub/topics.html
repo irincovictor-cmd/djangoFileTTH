@@ -209,19 +209,22 @@
         font-weight: 700;
         line-height: 1;
     }
+    /* Dashed border — same style as the old Recycle bin button */
     .btn-history {
         padding: 0.6rem 1rem;
-        border: 1.5px solid var(--ink);
+        border: 1.5px dashed var(--ink-soft);
         border-radius: 3px;
-        background: var(--paper-card);
-        color: var(--ink);
+        background: transparent;
+        color: var(--ink-soft);
         font-family: inherit;
         font-weight: 600;
         font-size: 0.9rem;
         cursor: pointer;
     }
     .btn-history:hover {
-        background: rgba(34,40,58,0.06);
+        border-color: var(--ink);
+        color: var(--ink);
+        background: rgba(34,40,58,0.04);
     }
 
     .card-link-hint {
