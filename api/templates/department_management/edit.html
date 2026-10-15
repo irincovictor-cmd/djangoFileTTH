@@ -1,0 +1,21 @@
+{% extends 'department_management/base.html' %}
+
+{% block title %}Edit Department{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h1>Edit Department</h1>
+  <form method="post" style="margin-top: 1.25rem;">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<div style="color:#dc2626;font-size:0.85rem;">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Update Department</button>
+    <a href="{% url 'department_detail' department.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

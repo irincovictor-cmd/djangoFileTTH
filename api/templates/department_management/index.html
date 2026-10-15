@@ -1,0 +1,55 @@
+{% extends 'department_management/base.html' %}
+
+{% block title %}Department Management System{% endblock %}
+
+{% block content %}
+<h1>Department Management System</h1>
+<p class="subtitle">Manage departments, department heads, and office locations.</p>
+
+<a href="{% url 'department_create' %}" class="btn btn-primary">+ Add Department</a>
+
+<div class="card">
+  <form method="get" class="search-row">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search code, name, or head">
+    <button type="submit" class="btn btn-primary">Search</button>
+    {% if q %}
+    <a href="{% url 'department_list' %}">Reset</a>
+    {% endif %}
+  </form>
+
+  <p class="count">Departments found: {{ count }}</p>
+
+  {% if departments %}
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Department</th>
+        <th>Department Head</th>
+        <th>Office Location</th>
+        <th>Date Established</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in departments %}
+      <tr>
+        <td>{{ d.code }}</td>
+        <td>{{ d.name }}</td>
+        <td>{{ d.head }}</td>
+        <td>{{ d.office_location }}</td>
+        <td>{{ d.date_established|date:"M d, Y" }}</td>
+        <td class="actions">
+          <a href="{% url 'department_detail' d.pk %}" class="btn-link">View</a>
+          <a href="{% url 'department_edit' d.pk %}" class="btn-link">Edit</a>
+          <a href="{% url 'department_delete' d.pk %}" class="btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="subtitle">No departments yet. Click Add Department to create one.</p>
+  {% endif %}
+</div>
+{% endblock %}

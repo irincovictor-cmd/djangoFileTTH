@@ -7,6 +7,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('departments/', include('department_management.urls')),
-    path('employees/', include('employee_management.urls')),
     path('', include('api.urls')),  # LearnHub + Portfolio
 ]

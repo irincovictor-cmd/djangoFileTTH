@@ -24,9 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api',
-    # Side by side in Django Admin sidebar:
     'department_management.apps.DepartmentManagementConfig',
-    'employee_management.apps.EmployeeManagementConfig',
 ]
 
 MIDDLEWARE = [
@@ -45,7 +43,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': True,
+        'APP_DIRS': True,  # finds api/templates/ (and other apps)
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
