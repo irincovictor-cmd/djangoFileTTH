@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'department_management.apps.DepartmentManagementConfig',
+    'employee_management.apps.EmployeeManagementConfig',  # Admin only — no public web pages
 ]
 
 MIDDLEWARE = [
@@ -43,7 +44,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': True,  # finds api/templates/ (and other apps)
+        'APP_DIRS': True,  # finds api/templates/
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
