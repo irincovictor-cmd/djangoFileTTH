@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'department_management.apps.DepartmentManagementConfig',
-    'employee_management.apps.EmployeeManagementConfig',  # Admin only — no public web pages
 ]
 
 MIDDLEWARE = [
