@@ -24,8 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api',
-    'department_management',
-    'employee_management',
+    # Side by side in Django Admin sidebar:
+    'department_management.apps.DepartmentManagementConfig',
+    'employee_management.apps.EmployeeManagementConfig',
 ]
 
 MIDDLEWARE = [
