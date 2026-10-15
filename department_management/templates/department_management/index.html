@@ -1,6 +1,7 @@
 {% extends 'department_management/base.html' %}
 
 {% block title %}Department Management System{% endblock %}
+{% block nav_dept %}active{% endblock %}
 
 {% block content %}
 <h1>Department Management System</h1>
@@ -52,10 +53,4 @@
   <p class="subtitle">No departments yet. Click Add Department to create one.</p>
   {% endif %}
 </div>
-
-<p style="margin-top: 1.5rem; font-size: 0.9rem;">
-  <a href="{% url 'employee_list' %}">Employee Management</a>
-  · <a href="{% url 'home' %}">LearnHub</a>
-  · <a href="/admin/">Admin</a>
-</p>
 {% endblock %}
