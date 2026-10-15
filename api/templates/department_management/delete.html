@@ -1,19 +1,24 @@
 {% extends 'department_management/base.html' %}
 
-{% block title %}Delete Department{% endblock %}
+{% block title %}Remove department{% endblock %}
 
 {% block content %}
-<div class="card form-card">
-  <h1>Delete Department?</h1>
-  <p class="subtitle" style="margin-top: 0.75rem;">
-    Are you sure you want to delete
-    <strong>{{ department.name }}</strong> ({{ department.code }})?
+<div class="form-wrap">
+  <h1>Remove department?</h1>
+  <p class="lede">
+    This will permanently delete
+    <strong style="color: var(--text);">{{ department.name }}</strong>
+    (<code style="color: var(--accent);">{{ department.code }}</code>).
   </p>
-  <p class="subtitle" style="color:#dc2626;">This cannot be undone.</p>
-  <form method="post" style="margin-top: 1rem;">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-primary" style="background:#dc2626;">Delete</button>
-    <a href="{% url 'department_list' %}" class="btn btn-secondary">Cancel</a>
-  </form>
+
+  <div class="panel">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-danger-solid">Yes, remove</button>
+        <a href="{% url 'department_list' %}" class="btn btn-ghost">Keep it</a>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

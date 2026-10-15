@@ -1,19 +1,24 @@
 {% extends 'department_management/base.html' %}
 
-{% block title %}Department Details{% endblock %}
+{% block title %}{{ department.name }}{% endblock %}
 
 {% block content %}
-<div class="card form-card">
-  <h1>Department Details</h1>
-  <div class="detail-row"><strong>Code:</strong> {{ department.code }}</div>
-  <div class="detail-row"><strong>Name:</strong> {{ department.name }}</div>
-  <div class="detail-row"><strong>Department Head:</strong> {{ department.head }}</div>
-  <div class="detail-row"><strong>Office Location:</strong> {{ department.office_location }}</div>
-  <div class="detail-row"><strong>Date Established:</strong> {{ department.date_established|date:"F d, Y" }}</div>
-  <p style="margin-top: 1.25rem;">
-    <a href="{% url 'department_edit' department.pk %}" class="btn-link">Edit Department</a>
-    &nbsp;
-    <a href="{% url 'department_list' %}" class="btn-link">Back to Departments</a>
-  </p>
+<div class="form-wrap">
+  <h1>{{ department.name }}</h1>
+  <p class="lede">Department record</p>
+
+  <div class="panel">
+    <div class="detail-grid">
+      <div class="detail-item"><span class="k">Code</span><span>{{ department.code }}</span></div>
+      <div class="detail-item"><span class="k">Name</span><span>{{ department.name }}</span></div>
+      <div class="detail-item"><span class="k">Head</span><span>{{ department.head }}</span></div>
+      <div class="detail-item"><span class="k">Location</span><span>{{ department.office_location }}</span></div>
+      <div class="detail-item"><span class="k">Established</span><span>{{ department.date_established|date:"F j, Y" }}</span></div>
+    </div>
+    <div class="form-actions">
+      <a href="{% url 'department_edit' department.pk %}" class="btn btn-accent">Edit</a>
+      <a href="{% url 'department_list' %}" class="btn btn-ghost">Back to list</a>
+    </div>
+  </div>
 </div>
 {% endblock %}
