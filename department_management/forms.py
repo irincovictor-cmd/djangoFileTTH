@@ -14,9 +14,9 @@ class DepartmentForm(forms.ModelForm):
             "date_established": "Date established",
         }
         widgets = {
-            "code": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. d1234"}),
-            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. Finance"}),
-            "head": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. Crizan"}),
-            "office_location": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. Tawala"}),
+            "code": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter department code"}),
+            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter department name"}),
+            "head": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter department head name"}),
+            "office_location": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter office location"}),
             "date_established": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
         }
