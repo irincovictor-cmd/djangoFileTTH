@@ -1,0 +1,18 @@
+{% extends 'employee_management/base.html' %}
+
+{% block title %}Delete Employee{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h1>Delete Employee?</h1>
+  <p class="subtitle" style="margin-top: 0.75rem;">
+    Are you sure you want to delete
+    <strong>{{ employee.name }}</strong> ({{ employee.employee_id }})?
+  </p>
+  <form method="post" style="margin-top: 1rem;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" style="background:#dc2626;">Delete</button>
+    <a href="{% url 'employee_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

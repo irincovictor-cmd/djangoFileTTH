@@ -1,0 +1,19 @@
+{% extends 'department_management/base.html' %}
+
+{% block title %}Department Details{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h1>Department Details</h1>
+  <div class="detail-row"><strong>Code:</strong> {{ department.code }}</div>
+  <div class="detail-row"><strong>Name:</strong> {{ department.name }}</div>
+  <div class="detail-row"><strong>Department Head:</strong> {{ department.head }}</div>
+  <div class="detail-row"><strong>Office Location:</strong> {{ department.office_location }}</div>
+  <div class="detail-row"><strong>Date Established:</strong> {{ department.date_established|date:"F d, Y" }}</div>
+  <p style="margin-top: 1.25rem;">
+    <a href="{% url 'department_edit' department.pk %}" class="btn-link">Edit Department</a>
+    &nbsp;
+    <a href="{% url 'department_list' %}" class="btn-link">Back to Departments</a>
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'department_management/base.html' %}
+
+{% block title %}Delete Department{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h1>Delete Department?</h1>
+  <p class="subtitle" style="margin-top: 0.75rem;">
+    Are you sure you want to delete
+    <strong>{{ department.name }}</strong> ({{ department.code }})?
+  </p>
+  <p class="subtitle" style="color:#dc2626;">This cannot be undone.</p>
+  <form method="post" style="margin-top: 1rem;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" style="background:#dc2626;">Delete</button>
+    <a href="{% url 'department_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
